@@ -1,3 +1,4 @@
+/** Visualizes one policy's cache snapshot and current access decision. */
 import type { CacheSnapshot, TraceEntry } from "../simulator/types";
 
 type CachePanelProps = {
@@ -11,6 +12,7 @@ type CachePanelProps = {
 };
 
 function selectedLineClass(entry: TraceEntry | null, slotIndex: number): string {
+  // The selected line distinguishes a hit, empty-line fill, and replacement.
   if (!entry || entry.selectedSlot !== slotIndex) {
     return "";
   }
@@ -45,11 +47,14 @@ export function CachePanel({
         : `Step ${currentStep}`;
 
   return (
-    <article className="cache-panel" aria-labelledby={`${policy.toLowerCase()}-title`}>
+    <article className={`cache-panel cache-panel--${policy.toLowerCase()}`} aria-labelledby={`${policy.toLowerCase()}-title`}>
       <div className="cache-heading">
-        <div>
+        <div className="policy-heading">
+          <span className="policy-index" aria-hidden="true">{policy === "LRU" ? "A" : "B"}</span>
+          <div>
           <p className="policy-name">{expandedName}</p>
           <h3 id={`${policy.toLowerCase()}-title`}>{policy} cache</h3>
+          </div>
         </div>
         <span className="waiting-indicator">{status}</span>
       </div>
@@ -90,12 +95,12 @@ export function CachePanel({
 
             return (
               <li className={selectedLineClass(currentEntry, line.slotIndex)} key={line.slotIndex}>
-                <span>{line.slotIndex}</span>
+                <span className="cache-slot">{line.slotIndex}</span>
                 <span className={`line-state line-state--${line.valid ? "valid" : "empty"}`}>
                   {line.valid ? "Valid" : "Empty"}
                 </span>
-                <strong>{line.valid ? line.blockAddress : "—"}</strong>
-                <span>
+                <strong className="cache-address">{line.valid ? line.blockAddress : "—"}</strong>
+                <span className="recency-value">
                   {line.valid
                     ? `${rank ? `#${rank} · ` : ""}last ${line.lastAccessAt}`
                     : "—"}

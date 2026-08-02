@@ -1,3 +1,4 @@
+/** Synchronized, latency-aware LRU/MRU access history. */
 import type { PolicyComparisonResult, TraceEntry } from "../simulator/types";
 import { getAccessLatencyNs, type TimingConfiguration } from "../simulator/timing";
 import { Panel } from "./Panel";
@@ -36,7 +37,7 @@ export function TraceLog({ result, timing, visibleSteps }: TraceLogProps) {
   return (
     <Panel
       id="trace"
-      eyebrow="Access history"
+      eyebrow="05 / Access history"
       title="Trace log"
       aside={<span className="placeholder-label">{rows.length} visible entries</span>}
     >

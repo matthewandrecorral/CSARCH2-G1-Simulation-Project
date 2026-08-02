@@ -1,3 +1,4 @@
+/** Calculates and presents the seven required statistics for both policies. */
 import type { PolicyComparisonResult } from "../simulator/types";
 import {
   calculateSimulationStatistics,
@@ -46,11 +47,18 @@ export function StatisticsPanel({ result, timing }: StatisticsPanelProps) {
   const readPolicyLabel = timing?.readPolicy === "non-load-through"
     ? "Non-load-through"
     : "Load-through";
+  const performanceLabel = lru && mru
+    ? lru.averageAccessTimeNs < mru.averageAccessTimeNs
+      ? "LRU leads this workload"
+      : mru.averageAccessTimeNs < lru.averageAccessTimeNs
+        ? "MRU leads this workload"
+        : "Policies are evenly matched"
+    : "Awaiting simulation data";
 
   return (
     <Panel
       id="statistics"
-      eyebrow="Results"
+      eyebrow="04 / Results"
       title="Statistics"
       aside={(
         <span className={`status-badge ${result ? "status-badge--live" : "status-badge--ready"}`}>
@@ -58,6 +66,28 @@ export function StatisticsPanel({ result, timing }: StatisticsPanelProps) {
         </span>
       )}
     >
+      {lru && mru && (
+        <div className="results-overview">
+          <div className="performance-callout">
+            <span className="performance-kicker">Performance readout</span>
+            <strong>{performanceLabel}</strong>
+            <p>Lower average memory access time determines the lead.</p>
+          </div>
+
+          <div className="rate-card rate-card--lru">
+            <div><span>LRU hit rate</span><strong>{formatRate(lru.hitRate)}</strong></div>
+            <progress aria-label={`LRU hit rate ${formatRate(lru.hitRate)}`} max="1" value={lru.hitRate} />
+            <small>{formatNumber(lru.hitCount)} hits / {formatNumber(lru.accessCount)} accesses</small>
+          </div>
+
+          <div className="rate-card rate-card--mru">
+            <div><span>MRU hit rate</span><strong>{formatRate(mru.hitRate)}</strong></div>
+            <progress aria-label={`MRU hit rate ${formatRate(mru.hitRate)}`} max="1" value={mru.hitRate} />
+            <small>{formatNumber(mru.hitCount)} hits / {formatNumber(mru.accessCount)} accesses</small>
+          </div>
+        </div>
+      )}
+
       {timing && (
         <div className="timing-summary" aria-label="Active timing inputs">
           <span><strong>Read policy</strong>{readPolicyLabel}</span>

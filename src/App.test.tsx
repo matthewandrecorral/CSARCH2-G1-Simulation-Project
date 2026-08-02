@@ -19,5 +19,6 @@ describe("interactive application shell", () => {
     expect(markup).toContain("Awaiting run");
     expect(markup).toContain("Trace log");
     expect(markup).toContain("Interactive simulator");
+    expect(markup).toContain("Memory data path");
   });
 });

@@ -1,3 +1,7 @@
+/**
+ * Application coordinator: validates form state, runs both policies, and maps
+ * immutable simulator snapshots onto playback and presentation components.
+ */
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
@@ -12,6 +16,7 @@ import { CachePanel } from "./components/CachePanel";
 import { ConfigurationPanel } from "./components/ConfigurationPanel";
 import { PlaybackControls } from "./components/PlaybackControls";
 import { SequencePanel } from "./components/SequencePanel";
+import { SimulationTelemetry } from "./components/SimulationTelemetry";
 import { StatisticsPanel } from "./components/StatisticsPanel";
 import { TraceLog } from "./components/TraceLog";
 import { compareReplacementPolicies } from "./simulator/comparison";
@@ -28,6 +33,7 @@ import {
 } from "./simulator/timing";
 import { validateCacheConfiguration } from "./simulator/validation";
 
+// These are browser-rendering safeguards, not limits imposed by the simulator.
 const UI_RESOURCE_CACHE_LIMIT = 4_096;
 const UI_SNAPSHOT_LINE_LIMIT = 250_000;
 
@@ -42,6 +48,8 @@ function deriveSequence(
   randomSequence: readonly number[],
   customInput: string,
 ): DerivedSequence {
+  // Keep workload derivation pure so previews and completed runs use the same
+  // parser/generator rules.
   if (choice === "custom") {
     const parsed = parseCustomSequence(customInput);
     return parsed.valid
@@ -99,6 +107,8 @@ export default function App() {
   const mruSnapshot = getCacheSnapshotAtStep(comparison?.mru ?? null, currentStep, 4);
 
   const invalidateRun = useCallback(() => {
+    // Any edited input invalidates statistics and playback, preventing a stale
+    // result from being displayed beside a new configuration.
     setComparison(null);
     setActiveTiming(null);
     setCurrentStep(0);
@@ -115,6 +125,7 @@ export default function App() {
       return;
     }
 
+    // Chained timeouts avoid overlapping ticks when speed or state changes.
     const timer = window.setTimeout(() => {
       setCurrentStep((step) => clampPlaybackStep(step + 1, totalSteps));
     }, speedMs);
@@ -205,6 +216,8 @@ export default function App() {
       nextErrors.run = `This run would record more than ${UI_SNAPSHOT_LINE_LIMIT.toLocaleString()} cache-line snapshots per policy. Choose a shorter sequence or a smaller cache to protect browser resources; the simulator core has no assignment-defined cache maximum.`;
     }
 
+    // Create neither simulator unless geometry, timing, workload, and UI
+    // resource checks all pass together.
     if (Object.keys(nextErrors).length > 0 || !validation.valid || !timingValidation.valid) {
       setConfigurationErrors(nextErrors);
       invalidateRun();
@@ -249,23 +262,42 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="site-header">
-        <div>
-          <p className="eyebrow">CSARCH2 · Group 1 · Machine 6</p>
+        <div className="brand-lockup" aria-label="Cache policy lab">
+          <span className="brand-mark" aria-hidden="true">
+            <i /><i /><i /><i />
+          </span>
+          <div>
+            <span className="brand-course">CSARCH2</span>
+            <span className="brand-team">Group 1 / Machine 6</span>
+          </div>
+        </div>
+
+        <div className="hero-copy">
+          <p className="eyebrow">Memory systems / replacement policies</p>
           <h1>Fully Associative Cache Policy Lab</h1>
           <p className="intro">
-            Explore how Least Recently Used and Most Recently Used react to the
-            same block-access sequence, one immutable snapshot at a time.
+            Trace every access. Inspect every eviction. Compare how LRU and MRU
+            reshape the same cache workload in real time.
           </p>
+          <div className="hero-specs" aria-label="Simulator characteristics">
+            <span><strong>02</strong> policies</span>
+            <span><strong>1,024</strong> memory blocks</span>
+            <span><strong>∞</strong> traceable steps</span>
+          </div>
         </div>
-        <span className="status-badge status-badge--live">Interactive simulator</span>
+
+        <div className="hero-status">
+          <span className="status-badge status-badge--live">Interactive simulator</span>
+          <span className="system-note">Simulation core online</span>
+        </div>
       </header>
 
       <nav className="section-nav" aria-label="Page sections">
-        <a href="#configuration">Configuration</a>
-        <a href="#sequence">Test sequence</a>
-        <a href="#comparison">Comparison</a>
-        <a href="#statistics">Statistics</a>
-        <a href="#trace">Trace log</a>
+        <a href="#configuration"><span>01</span> Configuration</a>
+        <a href="#sequence"><span>02</span> Test sequence</a>
+        <a href="#comparison"><span>03</span> Comparison</a>
+        <a href="#statistics"><span>04</span> Statistics</a>
+        <a href="#trace"><span>05</span> Trace log</a>
       </nav>
 
       <main>
@@ -321,7 +353,7 @@ export default function App() {
         <section id="comparison" className="page-section" aria-labelledby="comparison-title">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Policy comparison</p>
+              <p className="eyebrow">03 / Policy comparison</p>
               <h2 id="comparison-title">Cache memory state</h2>
             </div>
             <p>
@@ -329,6 +361,16 @@ export default function App() {
               access sequence.
             </p>
           </div>
+
+          <SimulationTelemetry
+            currentStep={currentStep}
+            isPlaying={isPlaying}
+            lruEntry={lruEntry}
+            mruEntry={mruEntry}
+            speedMs={speedMs}
+            timing={activeTiming}
+            totalSteps={totalSteps}
+          />
 
           <PlaybackControls
             currentStep={currentStep}
@@ -391,7 +433,9 @@ export default function App() {
       </main>
 
       <footer>
-        Group 1 · Fully Associative LRU versus Fully Associative MRU
+        <span>CSARCH2 / GROUP 1</span>
+        <p>Fully Associative LRU versus Fully Associative MRU</p>
+        <span>Interactive Cache Simulator</span>
       </footer>
     </div>
   );

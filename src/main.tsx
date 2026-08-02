@@ -1,3 +1,4 @@
+/** Browser entry point. StrictMode helps surface unsafe React side effects. */
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 

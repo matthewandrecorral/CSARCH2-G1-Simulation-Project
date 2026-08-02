@@ -1,3 +1,4 @@
+/** Least Recently Used replacement: evict the smallest last-access tick. */
 import type { ReplacementPolicy } from "../types";
 import { selectByRecency } from "./shared";
 

@@ -1,3 +1,4 @@
+/** Shared deterministic recency selector used by both replacement policies. */
 import type {
   OccupiedCacheLine,
   ReplacementContext,
@@ -28,12 +29,15 @@ export function selectByRecency(
     );
   }
 
+  // Sort a copy because the policy must never mutate the engine's snapshot.
   const orderedCandidates = [...occupiedLines].sort((left, right) => {
     const timestampDifference =
       direction === "least"
         ? left.lastAccessAt - right.lastAccessAt
         : right.lastAccessAt - left.lastAccessAt;
 
+    // Access ticks are normally unique; the slot fallback documents behavior
+    // for imported or otherwise malformed state containing a tie.
     return timestampDifference || left.slotIndex - right.slotIndex;
   });
   const victim = orderedCandidates[0];

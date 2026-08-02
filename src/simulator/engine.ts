@@ -1,3 +1,7 @@
+/**
+ * State machine for one fully associative cache and one replacement policy.
+ * Timing is intentionally separate because it never changes cache residency.
+ */
 import {
   cloneCache,
   createEmptyCache,
@@ -48,6 +52,8 @@ function validateReplacementDecision(
   cache: CacheSnapshot,
   policyName: string,
 ): void {
+  // A policy is an injected strategy, so validate its result before committing
+  // any state change. This protects trace integrity from faulty policies.
   if (!Number.isSafeInteger(decision.slotIndex)) {
     throw new ReplacementPolicyError(
       `${policyName} returned a non-integer cache slot.`,
@@ -101,6 +107,7 @@ export class FullyAssociativeCacheSimulator {
   }
 
   getCacheState(): CacheSnapshot {
+    // Public getters never expose the engine's live mutable references.
     return cloneCache(this.cache);
   }
 
@@ -124,6 +131,8 @@ export class FullyAssociativeCacheSimulator {
     let selectionReason: TraceEntry["selectionReason"];
     let replacementExplanation: string | null = null;
 
+    // Fully associative lookup has three mutually exclusive outcomes: hit,
+    // miss with an empty slot, or miss requiring policy-selected replacement.
     if (hitSlot !== null) {
       selectedSlot = hitSlot;
       selectionReason = "hit";
@@ -136,6 +145,7 @@ export class FullyAssociativeCacheSimulator {
         selectionReason = "empty-slot";
       } else {
         const decision = this.replacementPolicy.selectVictim({
+          // Give policies an isolated view so they cannot mutate engine state.
           cache: cloneCache(cacheBefore),
           requestedBlock,
           accessNumber,
@@ -161,6 +171,8 @@ export class FullyAssociativeCacheSimulator {
       );
     }
 
+    // Store enough evidence to replay backward by selecting snapshots rather
+    // than attempting to reverse cache operations.
     const entry: TraceEntry = {
       accessNumber,
       requestedBlock,

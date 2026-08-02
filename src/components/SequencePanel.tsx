@@ -1,3 +1,4 @@
+/** Workload selector, custom input editor, and generated-sequence preview. */
 import type { SequenceChoice } from "../application";
 import { Panel } from "./Panel";
 
@@ -43,7 +44,7 @@ export function SequencePanel({
   return (
     <Panel
       id="sequence"
-      eyebrow="Workload"
+      eyebrow="02 / Workload"
       title="Test sequence"
       aside={<span className="sequence-count">{sequence.length} accesses</span>}
     >

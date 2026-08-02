@@ -1,3 +1,4 @@
+/** Validation boundary for cache geometry, block addresses, and access lists. */
 import {
   MAIN_MEMORY_BLOCK_COUNT,
   type CacheConfiguration,
@@ -56,9 +57,11 @@ export class MemoryBlockSequenceError extends Error {
 }
 
 function isPowerOfTwo(value: number): boolean {
+  // log2 is integral exactly when a positive integer is a power of two.
   return Number.isSafeInteger(value) && Number.isInteger(Math.log2(value));
 }
 
+/** Validate user-supplied geometry without silently coercing invalid values. */
 export function validateCacheConfiguration(
   input: CacheConfigurationInput,
 ): ValidationResult<CacheConfiguration> {
@@ -185,6 +188,7 @@ export function validateMemoryBlockSequence(
   const issues: ValidationIssue[] = [];
   const addresses: number[] = [];
 
+  // Collect every bad position in one pass so the UI can report all errors at once.
   sequence.forEach((address, index) => {
     const result = validateMemoryBlockAddress(address);
 

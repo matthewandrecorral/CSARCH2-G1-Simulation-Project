@@ -1,3 +1,4 @@
+/** Pure cache-state helpers. Every mutating operation returns a fresh snapshot. */
 import type {
   CacheLine,
   CacheSnapshot,
@@ -18,6 +19,7 @@ export function createEmptyCache(cacheBlockCount: number): CacheSnapshot {
 }
 
 export function cloneCache(cache: CacheSnapshot): CacheSnapshot {
+  // Clone every line so callers cannot mutate a snapshot retained by the trace.
   return cache.map((line): CacheLine => ({ ...line }));
 }
 
@@ -33,6 +35,8 @@ export function findBlockSlot(
 }
 
 export function findFirstEmptySlot(cache: CacheSnapshot): number | null {
+  // Cache construction preserves ascending slot order, satisfying the required
+  // lowest-numbered-empty-slot rule without a second sorting pass.
   return cache.find((line) => !line.valid)?.slotIndex ?? null;
 }
 
@@ -78,6 +82,7 @@ export function loadBlockIntoSlot(
 }
 
 export function getRecencyOrder(cache: CacheSnapshot): readonly RecencyEntry[] {
+  // Most-recent first; slot index makes even malformed tied state deterministic.
   return cache
     .filter((line) => line.valid)
     .map((line) => ({

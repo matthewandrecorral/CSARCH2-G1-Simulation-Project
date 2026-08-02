@@ -1,3 +1,4 @@
+/** Most Recently Used replacement: evict the largest last-access tick. */
 import type { ReplacementPolicy } from "../types";
 import { selectByRecency } from "./shared";
 

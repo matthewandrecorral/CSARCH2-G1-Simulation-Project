@@ -1,3 +1,4 @@
+/** UI-facing parsing and snapshot navigation helpers. */
 import { createEmptyCache } from "./simulator/cache";
 import type {
   CacheSnapshot,
@@ -23,6 +24,8 @@ export function parseCustomSequence(input: string): SequenceParseResult {
     };
   }
 
+  // Check comma groups before whitespace tokenization so inputs such as "1,,2"
+  // produce a precise empty-token error instead of being silently normalized.
   const commaGroups = input.split(",");
 
   if (commaGroups.some((group) => group.trim().length === 0)) {
@@ -77,6 +80,7 @@ export function getTraceEntryAtStep(
   }
 
   const safeStep = clampPlaybackStep(step, result.trace.length);
+  // Playback step zero is the pre-access state; trace entries are zero-indexed.
   return result.trace[safeStep - 1] ?? null;
 }
 
@@ -89,6 +93,8 @@ export function getCacheSnapshotAtStep(
     return createEmptyCache(emptyCacheBlockCount);
   }
 
+  // Backward navigation selects a recorded immutable snapshot. No cache
+  // mutation needs to be inverted, which keeps replay deterministic.
   const entry = getTraceEntryAtStep(result, step);
   return entry?.cacheAfter ?? createEmptyCache(result.configuration.cacheBlockCount);
 }

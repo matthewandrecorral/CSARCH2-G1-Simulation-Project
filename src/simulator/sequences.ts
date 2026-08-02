@@ -1,3 +1,4 @@
+/** Required assignment workloads plus deterministic seeded random generation. */
 import { MAIN_MEMORY_BLOCK_COUNT } from "./types";
 import { validateCacheConfiguration } from "./validation";
 
@@ -27,6 +28,8 @@ function assertValidPatternCacheBlockCount(cacheBlockCount: unknown): number {
 
   const count = validation.value.cacheBlockCount;
 
+  // Both prescribed patterns reference 2n - 1, so n above 512 would address
+  // beyond the fixed 1,024-block main memory.
   if (count * 2 > MAIN_MEMORY_BLOCK_COUNT) {
     throw new SequenceGenerationError(
       `The required 0 through 2n - 1 pattern exceeds the ${MAIN_MEMORY_BLOCK_COUNT}-block main memory when n is greater than ${MAIN_MEMORY_BLOCK_COUNT / 2}.`,
@@ -62,6 +65,8 @@ export function generateMidRepeatReverseSequence(
   const firstHalfDescending = descendingRange(count - 1);
   const fullDescending = descendingRange(2 * count - 1);
 
+  // Assignment order: half ascending, full ascending twice, half descending,
+  // then full descending twice. The resulting sequence has length 10n.
   return [
     ...firstHalfAscending,
     ...fullAscending,
@@ -73,6 +78,7 @@ export function generateMidRepeatReverseSequence(
 }
 
 function hashSeed(seed: string): number {
+  // FNV-1a converts an arbitrary text seed into a stable unsigned 32-bit state.
   let hash = 0x811c9dc5;
 
   for (let index = 0; index < seed.length; index += 1) {
@@ -84,6 +90,7 @@ function hashSeed(seed: string): number {
 }
 
 function createMulberry32(seed: number): () => number {
+  // Mulberry32 is small and deterministic; output is normalized to [0, 1).
   let state = seed >>> 0;
 
   return () => {

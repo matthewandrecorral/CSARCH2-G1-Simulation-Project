@@ -1,3 +1,4 @@
+/** Controlled configuration form for geometry, read policy, and timing. */
 import type { ReadPolicy } from "../simulator/timing";
 import { Panel } from "./Panel";
 
@@ -33,7 +34,7 @@ export function ConfigurationPanel({
   return (
     <Panel
       id="configuration"
-      eyebrow="Setup"
+      eyebrow="01 / System setup"
       title="Cache configuration"
       aside={<span className="status-badge status-badge--ready">Engine connected</span>}
     >
@@ -167,7 +168,8 @@ export function ConfigurationPanel({
       {errors.run && <p className="form-error" role="alert">{errors.run}</p>}
 
       <button className="primary-button" onClick={onRun} type="button">
-        Run LRU / MRU comparison
+        <span>Run LRU / MRU comparison</span>
+        <span aria-hidden="true">→</span>
       </button>
       <p className="scope-note">
         C = 1 ns and M = 100 ns are editable teaching defaults, not hardware measurements.

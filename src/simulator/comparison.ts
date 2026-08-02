@@ -1,3 +1,4 @@
+/** Runs LRU and MRU against the exact same validated workload. */
 import { FullyAssociativeCacheSimulator } from "./engine";
 import { lruPolicy } from "./policies/lru";
 import { mruPolicy } from "./policies/mru";
@@ -26,6 +27,8 @@ export function compareReplacementPolicies(
   configuration: CacheConfigurationInput,
   sequenceInput: unknown,
 ): PolicyComparisonResult {
+  // Validate and clone once before either policy starts so neither comparison
+  // can receive a different or later-mutated sequence.
   const inputSequence = assertValidMemoryBlockSequence(sequenceInput);
   const lruSimulator = new FullyAssociativeCacheSimulator(
     configuration,
@@ -36,6 +39,7 @@ export function compareReplacementPolicies(
     mruPolicy,
   );
 
+  // Advance the two initially empty caches in lockstep.
   inputSequence.forEach((blockAddress) => {
     lruSimulator.access(blockAddress);
     mruSimulator.access(blockAddress);

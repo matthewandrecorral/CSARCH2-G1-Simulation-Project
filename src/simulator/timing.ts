@@ -1,3 +1,4 @@
+/** Read-policy latency formulas and aggregate simulation statistics. */
 import type { AccessResult, SimulationResult } from "./types";
 
 export type ReadPolicy = "load-through" | "non-load-through";
@@ -96,6 +97,8 @@ export function getAccessLatencyNs(
     return timing.cacheAccessTimeNs;
   }
 
+  // Non-load-through waits for the fill and then performs one additional cache
+  // access; load-through forwards the requested word during the fill.
   const secondCacheAccess = timing.readPolicy === "non-load-through"
     ? timing.cacheAccessTimeNs
     : 0;
@@ -109,6 +112,8 @@ export function calculateSimulationStatistics(
   simulation: Pick<SimulationResult, "trace">,
   timing: TimingConfiguration,
 ): SimulationStatistics {
+  // Calculate from the recorded trace so displayed totals cannot drift from
+  // the hit/miss decisions made by the cache engine.
   const accessLatenciesNs = simulation.trace.map((entry) =>
     getAccessLatencyNs(entry.result, timing),
   );

@@ -1,3 +1,7 @@
+/**
+ * Shared domain model for the browser-independent cache simulator.
+ * Keeping these types free of React makes the engine reusable and directly testable.
+ */
 export const MAIN_MEMORY_BLOCK_COUNT = 1_024;
 
 export type CacheConfiguration = {
@@ -6,6 +10,8 @@ export type CacheConfiguration = {
   readonly mainMemoryBlockCount: typeof MAIN_MEMORY_BLOCK_COUNT;
 };
 
+// The valid flag forms a discriminated union: empty lines cannot accidentally
+// carry stale block addresses or recency timestamps in valid TypeScript state.
 export type EmptyCacheLine = {
   readonly slotIndex: number;
   readonly valid: false;
@@ -50,6 +56,7 @@ export interface ReplacementPolicy {
 export type AccessResult = "hit" | "miss";
 export type SelectionReason = "hit" | "empty-slot" | "replacement-policy";
 
+/** Complete evidence for one access, including immutable before/after states. */
 export type TraceEntry = {
   readonly accessNumber: number;
   readonly requestedBlock: number;

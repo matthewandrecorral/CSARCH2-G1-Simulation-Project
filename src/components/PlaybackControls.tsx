@@ -1,3 +1,4 @@
+/** Snapshot playback controls shared by both policy views. */
 import type { DisplayMode } from "../application";
 
 type PlaybackControlsProps = {
@@ -56,16 +57,16 @@ export function PlaybackControls({
 
       <div className="transport-controls">
         <button disabled={stepControlsDisabled || currentStep === 0} onClick={onReset} type="button">
-          Reset
+          <span aria-hidden="true">↺</span> Reset
         </button>
         <button disabled={stepControlsDisabled || currentStep === 0} onClick={onPrevious} type="button">
-          Previous
+          <span aria-hidden="true">←</span> Previous
         </button>
-        <button disabled={stepControlsDisabled || totalSteps === 0} onClick={onPlayPause} type="button">
-          {isPlaying ? "Pause" : "Play"}
+        <button className="play-button" disabled={stepControlsDisabled || totalSteps === 0} onClick={onPlayPause} type="button">
+          <span aria-hidden="true">{isPlaying ? "Ⅱ" : "▶"}</span> {isPlaying ? "Pause" : "Play"}
         </button>
         <button disabled={stepControlsDisabled || currentStep >= totalSteps} onClick={onNext} type="button">
-          Next
+          Next <span aria-hidden="true">→</span>
         </button>
       </div>
 
