@@ -10,4 +10,4 @@ The sequential and mid-repeat/reverse patterns contain addresses through `2n - 1
 
 Step 5 connects the React interface to the comparison runner and renders the engine's recorded snapshots and trace. Playback state, form parsing, and display-only browser resource safeguards live outside this simulator directory so the core remains browser-independent.
 
-Timing calculations remain intentionally unimplemented until Step 6.
+Step 6 adds `timing.ts`, the single reusable source for read-policy validation, per-access latency, hit/miss counts and rates, total access time, and AMAT. Timing remains separate from replacement because load-through versus non-load-through changes observed latency, not cache residency or recency.

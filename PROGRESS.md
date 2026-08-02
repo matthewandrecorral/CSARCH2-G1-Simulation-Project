@@ -2,11 +2,11 @@
 
 ## Project Status
 
-* Current authorized step: Step 5 - GUI Integration and Visualization
-* Current status: Completed; files are frozen pending explicit authorization
-* Last completed step: Step 5 - GUI Integration and Visualization
-* Next proposed step: Step 6 - Timing and Statistics
-* Last updated: August 2, 2026 (Asia/Singapore)
+* Current authorized scope: Complete all remaining local implementation and repository-preparation work
+* Current status: Complete
+* Last completed step: Step 7 - Final Repository Preparation
+* Next proposed step: None; repository is ready for user-controlled commit/push/deployment
+* Last updated: August 3, 2026 (Asia/Singapore)
 
 ## Completed Work
 
@@ -59,6 +59,14 @@
 * Added transparent UI resource safeguards without changing the simulator core's assignment-defined validation rules.
 * Kept timing inputs, read-policy latency, statistics calculations, screenshots, deployment, and final documentation out of Step 5.
 * Did not add packages, commit, push, create a pull request, or deploy.
+* Added a reusable, browser-independent timing module with validated read-policy and timing inputs, per-access latency, hit/miss counts and rates, total time, and AMAT.
+* Connected read policy, cache lookup time, and complete-block fetch time to the form with editable teaching defaults and stale-result invalidation.
+* Replaced the statistics placeholder with calculated LRU/MRU statistics, active formula inputs, units, and formulas.
+* Added policy-specific per-access latency columns to the synchronized trace log.
+* Added focused timing tests and a regression test that locks the documented required-sequence results to simulator output.
+* Generated and documented results for all three required sequence types at `n = 4`, including deterministic random seed `group-1`, and added workload-specific analysis.
+* Replaced the one-line README with complete setup, usage, model, formula, results, assumptions, limits, layout, and verification documentation.
+* Completed final test, production-build, whitespace, tracked-file, ignored-output, and repository-status checks without committing, pushing, opening a pull request, or deploying.
 
 ## Files Changed
 
@@ -119,6 +127,13 @@
 * Rebuilt `src/styles/global.css` for the functional controls, cache states, trace, responsive layout, focus visibility, and reduced-motion preference.
 * Modified `src/simulator/README.md` with the completed GUI-integration boundary.
 * Modified `PROGRESS.md` with the completed Step 5 record.
+* Created `src/simulator/timing.ts` and `src/simulator/timing.test.ts`.
+* Created `src/simulator/required-results.test.ts`.
+* Replaced `src/components/StatisticsPlaceholder.tsx` with `src/components/StatisticsPanel.tsx`.
+* Created `src/components/StatisticsPanel.test.tsx` for rendered statistics and trace-latency coverage.
+* Modified the configuration form, application state, trace log, application smoke test, and global styles for timing/statistics integration.
+* Replaced `README.md` with final project documentation.
+* Updated `PROJECT_SPEC.md`, `src/simulator/README.md`, and `PROGRESS.md` for completed Steps 6 and 7.
 
 ## Commands and Checks
 
@@ -154,12 +169,20 @@
 * Browser-control setup was attempted for interactive visual verification but no in-app or Chrome browser backend was available in the session; no alternate browser tool or screenshots were used.
 * Local Vite server check on `127.0.0.1:4173`: returned HTTP 200; the temporary server process was stopped afterward.
 * `git diff --check`: passed after Step 5; no whitespace errors were reported.
+* `npm.cmd test`: passed after timing/statistics, rendered output, and required-result coverage; 9 test files and 72 tests passed.
+* `npm.cmd run build`: passed after final implementation; TypeScript checking and Vite production bundling succeeded.
+* `git diff --check`: passed after final implementation; no whitespace errors were reported.
+* `git status --short --branch`, ignored-output review, source scan, and diff review: passed; only intended source/documentation changes are pending and generated dependencies/build output remain ignored.
+* Final local Vite server check on `127.0.0.1:4173`: returned HTTP 200 with the expected page title and React root; the temporary server was stopped.
+* Final browser-control setup and documented troubleshooting were attempted, but the session exposed no in-app or Chrome backend, so screenshots and an interactive click-through could not be completed.
+* Approved `npm.cmd audit --audit-level=moderate`: passed against the current npm advisory endpoint with 0 vulnerabilities.
+* Final likely-secret pattern scan and Markdown-link syntax inventory: passed; no embedded secrets were found and the two teaching-reference links are structurally valid.
 
 ## Tests
 
-* Passing: 58 of 58 automated tests across 6 files, including interactive application-shell rendering, custom-sequence parsing, recorded-snapshot navigation/restoration, shared-engine, validation, LRU/MRU policy, comparison, and sequence-generator coverage; TypeScript type check; Vite production build; local development-server HTTP check.
+* Passing: 72 of 72 automated tests across 9 files, including application-shell/statistics/trace rendering, custom-sequence parsing, recorded-snapshot navigation/restoration, shared engine, validation, LRU/MRU policy, comparison, sequence generation, timing validation/formulas/statistics, and documented-result regression coverage; TypeScript type check and Vite production build.
 * Failing: None.
-* Not yet implemented: Timing/statistics tests. Browser-driven GUI testing was unavailable in the current tool session; pure playback-state tests and server-render checks cover the Step 5 state boundary.
+* Browser verification: unavailable because the session exposed no browser backend; server-render coverage and the final local HTTP check passed.
 
 ## Decisions and Assumptions
 
@@ -169,8 +192,8 @@
 * React Testing Library and a browser DOM test environment were not installed because the current smoke test can use React's server renderer.
 * The application is interactive and imports the comparison engine through a thin application layer; the simulator itself remains independent of React and browser rendering.
 * The simulator accepts block addresses, not word addresses, because the assignment sequences use block indices.
-* Both read policies will allocate missed blocks and differ only in CPU-visible miss timing.
-* Proposed timing defaults remain `C = 1 ns` and `M = 100 ns`, with `M` representing a complete block fetch.
+* Both read policies allocate missed blocks and differ only in CPU-visible miss timing.
+* Timing defaults are `C = 1 ns` and `M = 100 ns`, with `M` representing a complete block fetch; both remain editable.
 * Both caches will start empty, choose the lowest-numbered empty slot first, and update recency on hits and loads.
 * No dependency or build output will be committed from `node_modules/` or `dist/`.
 * Cache lines use a discriminated union so an empty line cannot carry a block address or recency timestamp in valid TypeScript state.
@@ -178,7 +201,7 @@
 * Recency snapshots are ordered from most recently accessed to least recently accessed, with slot index as a deterministic fallback.
 * The shared engine knows only the `ReplacementPolicy` interface. A policy supplies an occupied slot and a non-empty explanation; invalid decisions are rejected before simulator state changes.
 * Geometry validation imposes no project-specific maximum. Values must be safe-integer powers of two and meet the assignment minimums; UI resource safeguards remain a later concern.
-* Read policy and timing are intentionally absent from the Step 3 engine because they do not change cache residency; the documented read-policy interpretation and proposed `C = 1 ns`, `M = 100 ns` defaults remain unchanged for the later timing module.
+* Read policy and timing remain separate from the replacement engine because they do not change cache residency; `timing.ts` is the single source for timing validation and formulas.
 * LRU chooses the minimum `lastAccessAt`; MRU chooses the maximum. The lowest slot index is the explicit deterministic fallback for artificial ties.
 * Replacement traces remain explainable through `replacementExplanation`, `evictedBlock`, the complete pre-access cache snapshot, and the MRU-to-LRU `recencyBefore` list.
 * The comparison runner validates and clones one sequence before either simulator starts, then advances both policies together for each address.
@@ -188,7 +211,7 @@
 * Changing a configuration or sequence input invalidates the prior run, stops playback, and returns the display to step zero so previews cannot be confused with stale results.
 * Selecting final-snapshot mode jumps a completed run to its last recorded step; selecting step-by-step mode returns it to the initial state.
 * The interface caps a single visual run at 4,096 cache lines and 250,000 cache-line snapshots per policy. These are disclosed browser-resource safeguards, not simulator-core or assignment-defined geometry limits.
-* The statistics panel remains visibly pending so Step 5 does not present invented timing values or unexplained totals.
+* A timing or read-policy edit invalidates the prior run just like geometry/sequence changes, ensuring statistics and trace latencies cannot become stale.
 
 ## Known Issues
 
@@ -198,6 +221,5 @@
 
 ## Next Step
 
-* Proposed Step 6 is limited to the reusable timing/statistics module, load-through versus non-load-through selection, editable positive timing inputs, per-access latency, aggregate hit/miss/rate/time calculations, GUI integration, and focused tests.
-* Step 6 must not create screenshots, deploy, or claim final documentation completion.
-* Authorization requires the exact command `NEXT STEP`.
+* No local implementation step remains.
+* Commit, push, pull-request creation, and deployment remain user-controlled actions and were not performed.

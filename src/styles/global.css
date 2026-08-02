@@ -221,6 +221,7 @@ p {
 
 .form-field input,
 .form-field textarea,
+.form-field select,
 .speed-control select {
   width: 100%;
   border: 1px solid #cbd5e3;
@@ -230,13 +231,20 @@ p {
   background: #fff;
 }
 
+.form-field input,
+.form-field select,
+.input-with-unit {
+  min-height: 42px;
+}
+
 .form-field textarea {
   resize: vertical;
   line-height: 1.5;
 }
 
 .form-field input[aria-invalid="true"],
-.form-field textarea[aria-invalid="true"] {
+.form-field textarea[aria-invalid="true"],
+.form-field select[aria-invalid="true"] {
   border-color: #d44b4b;
 }
 
@@ -328,6 +336,35 @@ p {
   color: #758095;
   font-size: 0.74rem;
   line-height: 1.45;
+}
+
+.timing-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.timing-summary span {
+  display: grid;
+  gap: 5px;
+  border: 1px solid #e0e6ef;
+  border-radius: 10px;
+  padding: 11px;
+  color: #25334a;
+  background: #f6f8fb;
+  font-size: 0.84rem;
+}
+
+.timing-summary strong {
+  color: #667287;
+  font-size: 0.68rem;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.formula-note {
+  max-width: 980px;
 }
 
 .form-error {
@@ -754,6 +791,10 @@ footer {
 }
 
 @media (max-width: 1050px) {
+  .timing-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .playback-panel {
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
@@ -794,7 +835,8 @@ footer {
   }
 
   .field-grid,
-  .playback-panel {
+  .playback-panel,
+  .timing-summary {
     grid-template-columns: 1fr;
   }
 

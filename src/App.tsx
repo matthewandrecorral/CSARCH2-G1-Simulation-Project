@@ -12,7 +12,7 @@ import { CachePanel } from "./components/CachePanel";
 import { ConfigurationPanel } from "./components/ConfigurationPanel";
 import { PlaybackControls } from "./components/PlaybackControls";
 import { SequencePanel } from "./components/SequencePanel";
-import { StatisticsPlaceholder } from "./components/StatisticsPlaceholder";
+import { StatisticsPanel } from "./components/StatisticsPanel";
 import { TraceLog } from "./components/TraceLog";
 import { compareReplacementPolicies } from "./simulator/comparison";
 import {
@@ -21,6 +21,11 @@ import {
   generateSequentialSequence,
 } from "./simulator/sequences";
 import type { PolicyComparisonResult } from "./simulator/types";
+import {
+  validateTimingConfiguration,
+  type ReadPolicy,
+  type TimingConfiguration,
+} from "./simulator/timing";
 import { validateCacheConfiguration } from "./simulator/validation";
 
 const UI_RESOURCE_CACHE_LIMIT = 4_096;
@@ -65,6 +70,9 @@ function deriveSequence(
 export default function App() {
   const [blockSizeWords, setBlockSizeWords] = useState("4");
   const [cacheBlockCount, setCacheBlockCount] = useState("4");
+  const [readPolicy, setReadPolicy] = useState<ReadPolicy>("load-through");
+  const [cacheAccessTimeNs, setCacheAccessTimeNs] = useState("1");
+  const [mainMemoryBlockFetchTimeNs, setMainMemoryBlockFetchTimeNs] = useState("100");
   const [sequenceChoice, setSequenceChoice] = useState<SequenceChoice>("sequential");
   const [customInput, setCustomInput] = useState("0, 1, 2, 3, 0, 1, 4, 5");
   const [seed, setSeed] = useState("");
@@ -72,6 +80,7 @@ export default function App() {
     generateRandomSequence(),
   );
   const [comparison, setComparison] = useState<PolicyComparisonResult | null>(null);
+  const [activeTiming, setActiveTiming] = useState<TimingConfiguration | null>(null);
   const [configurationErrors, setConfigurationErrors] = useState<Record<string, string>>({});
   const [displayMode, setDisplayMode] = useState<DisplayMode>("step");
   const [currentStep, setCurrentStep] = useState(0);
@@ -91,6 +100,7 @@ export default function App() {
 
   const invalidateRun = useCallback(() => {
     setComparison(null);
+    setActiveTiming(null);
     setCurrentStep(0);
     setIsPlaying(false);
   }, []);
@@ -163,9 +173,20 @@ export default function App() {
       cacheBlockCount: Number(cacheBlockCount),
     });
     const nextErrors: Record<string, string> = {};
+    const timingValidation = validateTimingConfiguration({
+      readPolicy,
+      cacheAccessTimeNs: Number(cacheAccessTimeNs),
+      mainMemoryBlockFetchTimeNs: Number(mainMemoryBlockFetchTimeNs),
+    });
 
     if (!validation.valid) {
       validation.issues.forEach((issue) => {
+        nextErrors[issue.field] = issue.message;
+      });
+    }
+
+    if (!timingValidation.valid) {
+      timingValidation.issues.forEach((issue) => {
         nextErrors[issue.field] = issue.message;
       });
     }
@@ -184,7 +205,7 @@ export default function App() {
       nextErrors.run = `This run would record more than ${UI_SNAPSHOT_LINE_LIMIT.toLocaleString()} cache-line snapshots per policy. Choose a shorter sequence or a smaller cache to protect browser resources; the simulator core has no assignment-defined cache maximum.`;
     }
 
-    if (Object.keys(nextErrors).length > 0 || !validation.valid) {
+    if (Object.keys(nextErrors).length > 0 || !validation.valid || !timingValidation.valid) {
       setConfigurationErrors(nextErrors);
       invalidateRun();
       return;
@@ -196,6 +217,7 @@ export default function App() {
     );
     setConfigurationErrors({});
     setComparison(result);
+    setActiveTiming(timingValidation.value);
     setIsPlaying(false);
     setCurrentStep(displayMode === "final" ? result.inputSequence.length : 0);
   }
@@ -250,11 +272,29 @@ export default function App() {
         <div className="setup-grid">
           <ConfigurationPanel
             blockSizeWords={blockSizeWords}
+            cacheAccessTimeNs={cacheAccessTimeNs}
             cacheBlockCount={cacheBlockCount}
             errors={configurationErrors}
+            mainMemoryBlockFetchTimeNs={mainMemoryBlockFetchTimeNs}
             onBlockSizeChange={handleBlockSizeChange}
+            onCacheAccessTimeChange={(value) => {
+              setCacheAccessTimeNs(value);
+              setConfigurationErrors((errors) => ({ ...errors, cacheAccessTimeNs: "", run: "" }));
+              invalidateRun();
+            }}
             onCacheBlockCountChange={handleCacheBlockCountChange}
+            onMainMemoryBlockFetchTimeChange={(value) => {
+              setMainMemoryBlockFetchTimeNs(value);
+              setConfigurationErrors((errors) => ({ ...errors, mainMemoryBlockFetchTimeNs: "", run: "" }));
+              invalidateRun();
+            }}
+            onReadPolicyChange={(value) => {
+              setReadPolicy(value);
+              setConfigurationErrors((errors) => ({ ...errors, readPolicy: "", run: "" }));
+              invalidateRun();
+            }}
             onRun={handleRun}
+            readPolicy={readPolicy}
           />
           <SequencePanel
             choice={sequenceChoice}
@@ -346,8 +386,8 @@ export default function App() {
           </div>
         </section>
 
-        <StatisticsPlaceholder />
-        <TraceLog result={comparison} visibleSteps={currentStep} />
+        <StatisticsPanel result={comparison} timing={activeTiming} />
+        <TraceLog result={comparison} timing={activeTiming} visibleSteps={currentStep} />
       </main>
 
       <footer>
