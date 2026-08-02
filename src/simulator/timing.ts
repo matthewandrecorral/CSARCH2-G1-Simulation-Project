@@ -1,25 +1,30 @@
 /** Read-policy latency formulas and aggregate simulation statistics. */
 import type { AccessResult, SimulationResult } from "./types";
 
+/** Supported CPU-visible cache-read timing interpretations. */
 export type ReadPolicy = "load-through" | "non-load-through";
 
+/** Validated latency inputs in nanoseconds. */
 export type TimingConfiguration = {
   readonly readPolicy: ReadPolicy;
   readonly cacheAccessTimeNs: number;
   readonly mainMemoryBlockFetchTimeNs: number;
 };
 
+/** Untrusted form values accepted by the timing validator. */
 export type TimingConfigurationInput = {
   readonly readPolicy: unknown;
   readonly cacheAccessTimeNs: unknown;
   readonly mainMemoryBlockFetchTimeNs: unknown;
 };
 
+/** Field-specific timing error displayed beside the corresponding control. */
 export type TimingValidationIssue = {
   readonly field: keyof TimingConfiguration;
   readonly message: string;
 };
 
+/** Discriminated success/failure result for timing validation. */
 export type TimingValidationResult =
   | {
       readonly valid: true;
@@ -31,6 +36,7 @@ export type TimingValidationResult =
       readonly issues: readonly TimingValidationIssue[];
     };
 
+/** Seven required statistics plus reusable per-access latency details. */
 export type SimulationStatistics = {
   readonly accessCount: number;
   readonly hitCount: number;
@@ -48,6 +54,7 @@ function isPositiveFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 
+/** Validate read policy and positive finite timing inputs without coercion. */
 export function validateTimingConfiguration(
   input: TimingConfigurationInput,
 ): TimingValidationResult {
@@ -89,6 +96,7 @@ export function validateTimingConfiguration(
   };
 }
 
+/** Apply the documented hit or selected read-policy miss formula. */
 export function getAccessLatencyNs(
   result: AccessResult,
   timing: TimingConfiguration,
@@ -108,6 +116,7 @@ export function getAccessLatencyNs(
     + secondCacheAccess;
 }
 
+/** Derive counts, rates, total time, and AMAT from a recorded simulation trace. */
 export function calculateSimulationStatistics(
   simulation: Pick<SimulationResult, "trace">,
   timing: TimingConfiguration,

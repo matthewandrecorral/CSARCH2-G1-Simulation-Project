@@ -31,6 +31,7 @@ function formatLatency(entry: TraceEntry, timing: TimingConfiguration | null): s
   })} ns`;
 }
 
+/** Render policy decisions in lockstep through the current playback position. */
 export function TraceLog({ result, timing, visibleSteps }: TraceLogProps) {
   const rows = result?.inputSequence.slice(0, visibleSteps) ?? [];
 

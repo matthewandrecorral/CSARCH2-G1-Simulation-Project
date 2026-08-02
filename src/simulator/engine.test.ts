@@ -1,3 +1,4 @@
+/** Exercises cache state transitions, policy validation, and snapshot isolation. */
 import { describe, expect, it, vi } from "vitest";
 
 import { FullyAssociativeCacheSimulator, ReplacementPolicyError } from "./engine";

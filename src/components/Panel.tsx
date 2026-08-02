@@ -8,6 +8,7 @@ type PanelProps = PropsWithChildren<{
   aside?: ReactNode;
 }>;
 
+/** Render a labelled page section with a consistent optional status area. */
 export function Panel({ id, title, eyebrow, aside, children }: PanelProps) {
   const titleId = `${id}-title`;
 

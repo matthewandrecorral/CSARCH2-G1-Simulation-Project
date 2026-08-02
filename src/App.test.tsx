@@ -1,3 +1,4 @@
+/** Smoke coverage for the rendered application shell and required output regions. */
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 

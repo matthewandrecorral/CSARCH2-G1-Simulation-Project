@@ -2,8 +2,10 @@
 import { MAIN_MEMORY_BLOCK_COUNT } from "./types";
 import { validateCacheConfiguration } from "./validation";
 
+/** Exact random-workload length required by the assignment. */
 export const RANDOM_SEQUENCE_LENGTH = 64;
 
+/** Signals invalid geometry for a prescribed address pattern. */
 export class SequenceGenerationError extends RangeError {
   constructor(message: string) {
     super(message);
@@ -47,6 +49,7 @@ function descendingRange(firstValue: number): number[] {
   return Array.from({ length: firstValue + 1 }, (_, offset) => firstValue - offset);
 }
 
+/** Generate two passes over blocks 0 through 2n-1, for a total length of 4n. */
 export function generateSequentialSequence(
   cacheBlockCount: unknown,
 ): readonly number[] {
@@ -56,6 +59,7 @@ export function generateSequentialSequence(
   return [...pass, ...pass];
 }
 
+/** Generate the assignment's six-part ascending/repeated/reversed 10n pattern. */
 export function generateMidRepeatReverseSequence(
   cacheBlockCount: unknown,
 ): readonly number[] {
@@ -102,6 +106,7 @@ function createMulberry32(seed: number): () => number {
   };
 }
 
+/** Generate 64 bounded addresses, deterministic only when a nonblank seed exists. */
 export function generateRandomSequence(
   seedInput?: string | null,
 ): readonly number[] {

@@ -17,6 +17,7 @@ type PlaybackControlsProps = {
   onSeek: (step: number) => void;
 };
 
+/** Navigate the shared LRU/MRU timeline without mutating recorded results. */
 export function PlaybackControls({
   mode,
   currentStep,

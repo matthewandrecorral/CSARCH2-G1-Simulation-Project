@@ -17,6 +17,7 @@ type ConfigurationPanelProps = {
   readPolicy: ReadPolicy;
 };
 
+/** Render validated geometry and timing controls as a fully controlled form. */
 export function ConfigurationPanel({
   blockSizeWords,
   cacheAccessTimeNs,

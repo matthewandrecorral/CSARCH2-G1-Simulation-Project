@@ -26,6 +26,7 @@ type SequencePanelProps = {
   onCopy: () => void;
 };
 
+/** Render workload selection, seed controls, custom parsing errors, and preview. */
 export function SequencePanel({
   choice,
   customInput,

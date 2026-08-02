@@ -23,6 +23,10 @@ function createSimulationResult(
   };
 }
 
+/**
+ * Run LRU and MRU from empty state with identical geometry and access order.
+ * The returned result is safe to retain as the UI's immutable playback model.
+ */
 export function compareReplacementPolicies(
   configuration: CacheConfigurationInput,
   sequenceInput: unknown,

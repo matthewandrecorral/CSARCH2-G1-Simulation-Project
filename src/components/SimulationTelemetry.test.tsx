@@ -1,3 +1,4 @@
+/** Verifies that telemetry reflects synchronized policy decisions and timing. */
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 

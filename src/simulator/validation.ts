@@ -4,17 +4,20 @@ import {
   type CacheConfiguration,
 } from "./types";
 
+/** Untrusted geometry accepted by the reusable validation boundary. */
 export type CacheConfigurationInput = {
   readonly blockSizeWords: unknown;
   readonly cacheBlockCount: unknown;
   readonly mainMemoryBlockCount?: unknown;
 };
 
+/** Field-specific message suitable for both exceptions and form errors. */
 export type ValidationIssue = {
   readonly field: string;
   readonly message: string;
 };
 
+/** Discriminated result that prevents callers from reading invalid values. */
 export type ValidationResult<T> =
   | {
       readonly valid: true;
@@ -26,6 +29,7 @@ export type ValidationResult<T> =
       readonly issues: readonly ValidationIssue[];
     };
 
+/** Thrown when invalid cache geometry reaches an assertion boundary. */
 export class CacheConfigurationError extends Error {
   readonly issues: readonly ValidationIssue[];
 
@@ -36,6 +40,7 @@ export class CacheConfigurationError extends Error {
   }
 }
 
+/** Thrown when one requested block lies outside the fixed main memory. */
 export class MemoryBlockAddressError extends RangeError {
   readonly address: unknown;
 
@@ -46,6 +51,7 @@ export class MemoryBlockAddressError extends RangeError {
   }
 }
 
+/** Aggregates every invalid position found in an access sequence. */
 export class MemoryBlockSequenceError extends Error {
   readonly issues: readonly ValidationIssue[];
 
@@ -116,6 +122,7 @@ export function validateCacheConfiguration(
   };
 }
 
+/** Validate one integer address against the fixed 0..1023 block range. */
 export function validateMemoryBlockAddress(
   address: unknown,
 ): ValidationResult<number> {
@@ -148,6 +155,7 @@ export function validateMemoryBlockAddress(
   return { valid: true, value: numericAddress, issues: [] };
 }
 
+/** Return a valid block address or throw a domain-specific range error. */
 export function assertValidMemoryBlockAddress(address: unknown): number {
   const result = validateMemoryBlockAddress(address);
 
@@ -158,6 +166,7 @@ export function assertValidMemoryBlockAddress(address: unknown): number {
   return result.value;
 }
 
+/** Validate an entire sequence while preserving order and duplicate accesses. */
 export function validateMemoryBlockSequence(
   sequence: unknown,
 ): ValidationResult<readonly number[]> {
@@ -208,6 +217,7 @@ export function validateMemoryBlockSequence(
     : { valid: true, value: addresses, issues: [] };
 }
 
+/** Return an isolated valid sequence or throw all collected sequence issues. */
 export function assertValidMemoryBlockSequence(
   sequence: unknown,
 ): readonly number[] {

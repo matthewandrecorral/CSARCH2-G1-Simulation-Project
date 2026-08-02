@@ -1,3 +1,4 @@
+/** Covers deterministic LRU/MRU selection and workload-level policy divergence. */
 import { describe, expect, it } from "vitest";
 
 import { compareReplacementPolicies } from "../comparison";

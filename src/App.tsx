@@ -75,6 +75,7 @@ function deriveSequence(
   }
 }
 
+/** Render and coordinate the complete interactive comparison experience. */
 export default function App() {
   const [blockSizeWords, setBlockSizeWords] = useState("4");
   const [cacheBlockCount, setCacheBlockCount] = useState("4");

@@ -26,6 +26,7 @@ function selectedLineClass(entry: TraceEntry | null, slotIndex: number): string 
     : "cache-line--replaced";
 }
 
+/** Render every line in one policy snapshot and explain its current decision. */
 export function CachePanel({
   policy,
   expandedName,

@@ -1,3 +1,4 @@
+/** Covers prescribed patterns, random bounds/reproduction, and comparison inputs. */
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { MemoryBlockSequenceError } from "./validation";

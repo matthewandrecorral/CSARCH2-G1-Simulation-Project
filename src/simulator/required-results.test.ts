@@ -1,3 +1,4 @@
+/** Regression locks for the documented results of all three required workloads. */
 import { describe, expect, it } from "vitest";
 
 import { compareReplacementPolicies } from "./comparison";

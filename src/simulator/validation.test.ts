@@ -1,3 +1,4 @@
+/** Covers configuration, boundary-address, and whole-sequence validation rules. */
 import { describe, expect, it } from "vitest";
 
 import { MAIN_MEMORY_BLOCK_COUNT } from "./types";

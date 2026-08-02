@@ -26,6 +26,7 @@ import {
   type CacheConfigurationInput,
 } from "./validation";
 
+/** Signals a missing, malformed, or unsafe replacement-policy decision. */
 export class ReplacementPolicyError extends Error {
   constructor(message: string) {
     super(message);
@@ -77,6 +78,10 @@ function validateReplacementDecision(
   }
 }
 
+/**
+ * Executes validated reads for one initially empty fully associative cache.
+ * The injected strategy is consulted only when a miss occurs in a full cache.
+ */
 export class FullyAssociativeCacheSimulator {
   readonly configuration: CacheConfiguration;
   readonly replacementPolicyName: string;
@@ -106,19 +111,23 @@ export class FullyAssociativeCacheSimulator {
     this.cache = createEmptyCache(this.configuration.cacheBlockCount);
   }
 
+  /** Return an isolated current snapshot, never the engine's internal array. */
   getCacheState(): CacheSnapshot {
     // Public getters never expose the engine's live mutable references.
     return cloneCache(this.cache);
   }
 
+  /** Return the validated addresses accepted so far in original order. */
   getAccessHistory(): readonly number[] {
     return [...this.accessHistory];
   }
 
+  /** Return deep-cloned trace entries safe for external playback code. */
   getTrace(): readonly TraceEntry[] {
     return this.trace.map(cloneTraceEntry);
   }
 
+  /** Execute one read and atomically record its decision and resulting state. */
   access(blockAddressInput: unknown): TraceEntry {
     const requestedBlock = assertValidMemoryBlockAddress(blockAddressInput);
     const accessNumber = this.accessHistory.length + 1;

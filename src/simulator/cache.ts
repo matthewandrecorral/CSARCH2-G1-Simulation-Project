@@ -5,6 +5,7 @@ import type {
   RecencyEntry,
 } from "./types";
 
+/** Create an all-invalid snapshot with stable ascending physical slot indexes. */
 export function createEmptyCache(cacheBlockCount: number): CacheSnapshot {
   return Array.from(
     { length: cacheBlockCount },
@@ -18,11 +19,13 @@ export function createEmptyCache(cacheBlockCount: number): CacheSnapshot {
   );
 }
 
+/** Deep-copy cache lines so recorded and returned states remain isolated. */
 export function cloneCache(cache: CacheSnapshot): CacheSnapshot {
   // Clone every line so callers cannot mutate a snapshot retained by the trace.
   return cache.map((line): CacheLine => ({ ...line }));
 }
 
+/** Find a resident block without computing an index, as required by FA mapping. */
 export function findBlockSlot(
   cache: CacheSnapshot,
   blockAddress: number,
@@ -34,12 +37,14 @@ export function findBlockSlot(
   return line?.slotIndex ?? null;
 }
 
+/** Return the lowest-numbered invalid slot, or null when the cache is full. */
 export function findFirstEmptySlot(cache: CacheSnapshot): number | null {
   // Cache construction preserves ascending slot order, satisfying the required
   // lowest-numbered-empty-slot rule without a second sorting pass.
   return cache.find((line) => !line.valid)?.slotIndex ?? null;
 }
 
+/** Record a hit by updating only the selected line's last-access tick. */
 export function touchCacheLine(
   cache: CacheSnapshot,
   slotIndex: number,
@@ -58,6 +63,7 @@ export function touchCacheLine(
   });
 }
 
+/** Load or replace a block and mark the access as both insertion and recency. */
 export function loadBlockIntoSlot(
   cache: CacheSnapshot,
   slotIndex: number,
@@ -81,6 +87,7 @@ export function loadBlockIntoSlot(
   );
 }
 
+/** Produce deterministic MRU-to-LRU ordering for trace explanations. */
 export function getRecencyOrder(cache: CacheSnapshot): readonly RecencyEntry[] {
   // Most-recent first; slot index makes even malformed tied state deterministic.
   return cache

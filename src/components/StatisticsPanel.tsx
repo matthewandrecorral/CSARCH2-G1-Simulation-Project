@@ -37,6 +37,7 @@ const metricRows: readonly MetricRow[] = [
   { label: "Total access time", getValue: (statistics) => `${formatNumber(statistics.totalAccessTimeNs)} ns` },
 ];
 
+/** Compare all required LRU/MRU metrics under the active timing configuration. */
 export function StatisticsPanel({ result, timing }: StatisticsPanelProps) {
   const lru = result && timing
     ? calculateSimulationStatistics(result.lru, timing)

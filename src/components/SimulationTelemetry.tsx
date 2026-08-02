@@ -46,6 +46,7 @@ function formatDecision(entry: TraceEntry | null): string {
   return `Miss / evict B${entry.evictedBlock}`;
 }
 
+/** Render synchronized address packets and miss routes for the selected step. */
 export function SimulationTelemetry({
   currentStep,
   isPlaying,

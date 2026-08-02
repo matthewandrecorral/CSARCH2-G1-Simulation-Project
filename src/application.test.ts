@@ -1,3 +1,4 @@
+/** Covers custom-input parsing and immutable playback boundary behavior. */
 import { describe, expect, it } from "vitest";
 
 import {

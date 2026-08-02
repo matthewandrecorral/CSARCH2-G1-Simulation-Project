@@ -837,6 +837,7 @@ body {
   width: min(1320px, calc(100% - 40px));
 }
 
+/* Branded page header and simulator identity. */
 .site-header {
   position: relative;
   display: grid;
@@ -1002,6 +1003,7 @@ body {
   box-shadow: 0 0 0 4px rgb(68 215 163 / 12%), 0 0 14px rgb(68 215 163 / 55%);
 }
 
+/* Sticky navigation between the five required output areas. */
 .section-nav {
   top: 10px;
   z-index: 20;
@@ -1568,6 +1570,7 @@ footer p {
   100% { box-shadow: inset 0 0 0 999px transparent; transform: translateX(0); }
 }
 
+/* Animated CPU/cache/main-memory data path and execution monitor. */
 .telemetry-shell {
   overflow: hidden;
   margin-bottom: 16px;
@@ -1997,6 +2000,7 @@ footer p {
   50% { opacity: 0.45; }
 }
 
+/* Responsive layout adaptations for tablet and narrow desktop widths. */
 @media (max-width: 1050px) {
   .site-header {
     grid-template-columns: 1fr auto;
@@ -2043,6 +2047,7 @@ footer p {
   }
 }
 
+/* Stack comparison content for tablet and mobile viewports. */
 @media (max-width: 800px) {
   .app-shell {
     width: min(100% - 24px, 650px);
@@ -2098,6 +2103,7 @@ footer p {
   }
 }
 
+/* Compact controls and data-path geometry for small phones. */
 @media (max-width: 560px) {
   .site-header {
     padding-top: 36px;
@@ -2312,6 +2318,7 @@ footer p {
   to { top: calc(100% - 8px); opacity: 0.9; }
 }
 
+/* Respect operating-system motion preferences without hiding state changes. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

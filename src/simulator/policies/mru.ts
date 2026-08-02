@@ -2,6 +2,7 @@
 import type { ReplacementPolicy } from "../types";
 import { selectByRecency } from "./shared";
 
+/** Replacement strategy that selects the largest last-access tick. */
 export const mruPolicy: ReplacementPolicy = {
   name: "MRU",
   selectVictim(context) {

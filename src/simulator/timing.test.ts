@@ -1,3 +1,4 @@
+/** Covers timing validation, both miss formulas, totals, rates, and AMAT. */
 import { describe, expect, it } from "vitest";
 
 import { compareReplacementPolicies } from "./comparison";

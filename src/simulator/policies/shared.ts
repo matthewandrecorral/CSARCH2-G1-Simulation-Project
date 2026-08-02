@@ -5,6 +5,7 @@ import type {
   ReplacementDecision,
 } from "../types";
 
+/** Signals an attempt to select a victim without an occupied candidate. */
 export class PolicySelectionError extends Error {
   constructor(message: string) {
     super(message);
@@ -14,6 +15,7 @@ export class PolicySelectionError extends Error {
 
 type RecencyDirection = "least" | "most";
 
+/** Select the least/most recent line and explain the exact deterministic choice. */
 export function selectByRecency(
   context: ReplacementContext,
   direction: RecencyDirection,

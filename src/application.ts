@@ -7,13 +7,18 @@ import type {
 } from "./simulator/types";
 import { validateMemoryBlockAddress } from "./simulator/validation";
 
+/** Workload sources available in the test-sequence panel. */
 export type SequenceChoice = "sequential" | "mid-repeat" | "random" | "custom";
+
+/** Playback presentation: recorded steps or the completed final state. */
 export type DisplayMode = "step" | "final";
 
+/** Custom-input parse result used without throwing inside controlled forms. */
 export type SequenceParseResult =
   | { readonly valid: true; readonly sequence: readonly number[] }
   | { readonly valid: false; readonly errors: readonly string[] };
 
+/** Parse comma/whitespace-separated base-10 block addresses without losing duplicates. */
 export function parseCustomSequence(input: string): SequenceParseResult {
   const trimmedInput = input.trim();
 
@@ -63,6 +68,7 @@ export function parseCustomSequence(input: string): SequenceParseResult {
     : { valid: true, sequence };
 }
 
+/** Normalize arbitrary navigation input into the inclusive range 0..totalSteps. */
 export function clampPlaybackStep(step: number, totalSteps: number): number {
   if (!Number.isFinite(step) || !Number.isSafeInteger(totalSteps) || totalSteps < 0) {
     return 0;
@@ -71,6 +77,7 @@ export function clampPlaybackStep(step: number, totalSteps: number): number {
   return Math.min(Math.max(Math.trunc(step), 0), totalSteps);
 }
 
+/** Resolve a one-based playback step; step zero deliberately has no access entry. */
 export function getTraceEntryAtStep(
   result: SimulationResult | null,
   step: number,
@@ -84,6 +91,7 @@ export function getTraceEntryAtStep(
   return result.trace[safeStep - 1] ?? null;
 }
 
+/** Resolve the recorded after-state, or an empty snapshot before the first access. */
 export function getCacheSnapshotAtStep(
   result: SimulationResult | null,
   step: number,
