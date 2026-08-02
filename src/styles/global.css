@@ -599,8 +599,8 @@ p {
 .result-chip--miss { color: #9a4d18 !important; background: #fde7d3; }
 
 .cache-table-wrap {
-  max-height: 520px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   border-top: 1px solid #e4e9f0;
   border-bottom: 1px solid #e4e9f0;
 }
@@ -615,9 +615,6 @@ p {
 }
 
 .cache-column-headings {
-  position: sticky;
-  z-index: 2;
-  top: 0;
   padding: 9px 18px;
   color: #6b778b;
   background: #f1f4f8;
