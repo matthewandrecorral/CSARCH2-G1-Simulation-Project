@@ -4,7 +4,7 @@
 
 A browser-based simulator that runs Least Recently Used (LRU) and Most Recently Used (MRU) fully associative caches side by side. Both caches start empty, receive the same validated sequence of read accesses, and expose every hit, miss, load, eviction, recency update, latency, and aggregate statistic.
 
-The simulator implements the requirements in the included [assignment brief](./CSARCH2%20Simulation%20Project1%20-%203rd%20Term%20AY%202025-2026.pdf). The cache engine is independent of React so its behavior can be tested without the interface.
+The simulator implements the assigned Machine 6 cache-memory requirements. The cache engine is independent of React so its behavior can be tested without the interface.
 
 ## Features
 
