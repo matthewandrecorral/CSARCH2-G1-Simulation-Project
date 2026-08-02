@@ -6,6 +6,10 @@ A browser-based simulator that runs Least Recently Used (LRU) and Most Recently 
 
 The simulator implements the requirements in the included [assignment brief](./CSARCH2%20Simulation%20Project1%20-%203rd%20Term%20AY%202025-2026.pdf). The cache engine is independent of React so its behavior can be tested without the interface.
 
+## Live demo
+
+[Open the deployed Fully Associative Cache Policy Lab](https://csarch2-cache-policy-lab.mattlovesshans.chatgpt.site)
+
 ## Features
 
 - Configurable power-of-two block size and cache-line count.
@@ -235,7 +239,7 @@ The assignment's Exemplary rating requires a correct working simulator, all spec
 - [x] README with setup, specifications, formulas, assumptions, required-case results, and analysis.
 - [ ] Screenshots showing the simulator and required test-case results.
 - [ ] Public 5–8 minute YouTube walkthrough link added to this README.
-- [ ] Deployed live-site link added to the GitHub repository's **About** section.
+- [x] Deployed live-site link recorded in this README.
 - [ ] Final commit pushed to the submission repository and the deployed build manually verified.
 
-No deployment URL or walkthrough video is currently recorded in this repository; these must not be treated as complete until real links are added.
+Screenshots and a walkthrough video were intentionally left for the project team to produce.
