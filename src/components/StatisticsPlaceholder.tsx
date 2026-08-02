@@ -16,7 +16,7 @@ export function StatisticsPlaceholder() {
       id="statistics"
       eyebrow="Results"
       title="Statistics"
-      aside={<span className="placeholder-label">Calculations pending</span>}
+      aside={<span className="placeholder-label">Next step</span>}
     >
       <div className="table-wrap">
         <table>
@@ -38,6 +38,10 @@ export function StatisticsPlaceholder() {
           </tbody>
         </table>
       </div>
+      <p className="scope-note">
+        Timing inputs, formulas, and derived statistics will be implemented as
+        one tested module in the next step.
+      </p>
     </Panel>
   );
 }

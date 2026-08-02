@@ -7,7 +7,7 @@
 - Project: Web-based cache memory simulator
 - Comparison: Fully Associative LRU versus Fully Associative MRU
 - Target completion date: August 2, 2026
-- Specification status: Step 2 repository scaffold complete; simulator implementation has not started
+- Specification status: Living technical specification; implementation progress is tracked in `PROGRESS.md`
 - Assignment source inspected: `C:\Users\matth\Downloads\CSARCH2 Simulation Project1 - 3rd Term AY 2025-2026.pdf`
 
 This document converts the assignment and the project's gradual development schedule into an implementation plan. Any behavior that the assignment does not define is marked as an assumption and must remain visible in the final README.
@@ -207,6 +207,7 @@ Generate `0` through `2n - 1`, then repeat that same range once more.
 - Formula: `[0..2n-1] + [0..2n-1]`.
 - Length: `4n`.
 - For `n = 4`: `0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7`.
+- Valid-address constraint: this predefined generator is available only when `n <= 512`, because larger values make `2n - 1` exceed block address 1,023. Larger cache configurations remain valid for compatible custom or random sequences.
 
 "Repeat the sequence two times" is interpreted as two total passes, matching the assignment example.
 
@@ -223,6 +224,7 @@ Concatenate these six segments exactly:
 
 - Length: `10n`.
 - For `n = 4`: `0,1,2,3,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,3,2,1,0,7,6,5,4,3,2,1,0,7,6,5,4,3,2,1,0`.
+- Valid-address constraint: this predefined generator is available only when `n <= 512`, for the same fixed-main-memory reason as Test Case 1.
 
 ### 8.3 Test Case 3 - Random sequence
 
@@ -233,6 +235,7 @@ Concatenate these six segments exactly:
 - Accept an optional seed.
 - A supplied seed must produce the same 64-value sequence across repeated runs of this application version.
 - The chosen deterministic pseudo-random algorithm must be documented once implemented so results do not depend on browser-specific randomness.
+- Implemented algorithm: trim the supplied seed, hash it with 32-bit FNV-1a, and use the hash as the Mulberry32 state. A blank seed uses `Math.random` and is intentionally non-reproducible.
 
 ## 9. Required Outputs
 
