@@ -8,7 +8,7 @@ The simulator implements the requirements in the included [assignment brief](./C
 
 ## Live demo
 
-[Open the deployed Fully Associative Cache Policy Lab](https://csarch2-cache-policy-lab.mattlovesshans.chatgpt.site)
+[Open the deployed Fully Associative Cache Policy Lab](https://csarch2-g1-simulation-project.vercel.app)
 
 ## Features
 
