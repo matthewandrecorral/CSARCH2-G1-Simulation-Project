@@ -6,10 +6,6 @@ A browser-based simulator that runs Least Recently Used (LRU) and Most Recently 
 
 The simulator implements the requirements in the included [assignment brief](./CSARCH2%20Simulation%20Project1%20-%203rd%20Term%20AY%202025-2026.pdf). The cache engine is independent of React so its behavior can be tested without the interface.
 
-## Live demo
-
-[Open the deployed Fully Associative Cache Policy Lab](https://csarch2-g1-simulation-project.vercel.app)
-
 ## Features
 
 - Configurable power-of-two block size and cache-line count.
@@ -230,16 +226,3 @@ The shared comparison runner validates and clones one sequence, creates two empt
 - Both read policies allocate on a miss; “non-load-through” does not mean “do not load the cache.”
 - `M` represents a complete-block fetch because the required inputs contain no word offset.
 - New loads are most-recently used, and every access advances the recency tick.
-
-## Submission checklist
-
-The assignment's Exemplary rating requires a correct working simulator, all specifications and test cases, all deliverables, and additional features. Before final submission, confirm each external deliverable below:
-
-- [x] Complete simulator source and automated tests.
-- [x] README with setup, specifications, formulas, assumptions, required-case results, and analysis.
-- [ ] Screenshots showing the simulator and required test-case results.
-- [ ] Public 5–8 minute YouTube walkthrough link added to this README.
-- [x] Publicly accessible live-site link recorded in this README.
-- [x] Final source pushed to `main` and the public deployment verified with HTTP 200.
-
-Screenshots and a walkthrough video were intentionally left for the project team to produce.
