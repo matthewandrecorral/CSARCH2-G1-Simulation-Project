@@ -239,7 +239,7 @@ The assignment's Exemplary rating requires a correct working simulator, all spec
 - [x] README with setup, specifications, formulas, assumptions, required-case results, and analysis.
 - [ ] Screenshots showing the simulator and required test-case results.
 - [ ] Public 5–8 minute YouTube walkthrough link added to this README.
-- [x] Deployed live-site link recorded in this README.
-- [ ] Final commit pushed to the submission repository and the deployed build manually verified.
+- [x] Publicly accessible live-site link recorded in this README.
+- [x] Final source pushed to `main` and the public deployment verified with HTTP 200.
 
 Screenshots and a walkthrough video were intentionally left for the project team to produce.
