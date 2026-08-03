@@ -39,7 +39,7 @@ describe("timing result presentation", () => {
     expect(markup).toContain("83.3333%");
     expect(markup).toContain("Configuration &amp; workload");
     expect(markup).toContain("4 words/block");
-    expect(markup).toContain("4 lines");
+    expect(markup).toContain("4 cache lines");
     expect(markup).toContain("C = 1 ns");
     expect(markup).toContain("M = 100 ns");
     expect(markup).toContain("Custom");

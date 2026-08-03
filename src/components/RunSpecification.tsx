@@ -33,7 +33,6 @@ export function RunSpecification({
     <section className="run-specification" aria-label="Run specification">
       <div className="run-specification__heading">
         <div>
-          <span>Run snapshot</span>
           <h3>Configuration &amp; workload</h3>
         </div>
         <div className="run-specification__badges">
@@ -46,8 +45,8 @@ export function RunSpecification({
         <div>
           <dt>Cache</dt>
           <dd>
-            <strong>{configuration.cacheBlockCount.toLocaleString()} lines</strong>
-            <span>{configuration.blockSizeWords.toLocaleString()} words/block · Fully associative</span>
+            <strong>{configuration.cacheBlockCount.toLocaleString()} cache lines</strong>
+            <strong>{configuration.blockSizeWords.toLocaleString()} words/block</strong>
           </dd>
         </div>
         <div>
