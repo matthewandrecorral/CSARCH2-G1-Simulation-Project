@@ -338,35 +338,6 @@ p {
   line-height: 1.45;
 }
 
-.timing-summary {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.timing-summary--derived {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.timing-summary span {
-  display: grid;
-  gap: 5px;
-  border: 1px solid #e0e6ef;
-  border-radius: 10px;
-  padding: 11px;
-  color: #25334a;
-  background: #f6f8fb;
-  font-size: 0.84rem;
-}
-
-.timing-summary strong {
-  color: #667287;
-  font-size: 0.68rem;
-  letter-spacing: 0.035em;
-  text-transform: uppercase;
-}
-
 .run-specification {
   position: relative;
   overflow: hidden;
@@ -1711,11 +1682,6 @@ body {
   background: var(--policy-metric-color);
 }
 
-.timing-summary span {
-  border-color: var(--ink-200);
-  background: #f7f9fc;
-}
-
 .table-wrap {
   border: 1px solid var(--ink-200);
   border-radius: 11px;
@@ -2248,14 +2214,6 @@ footer p {
     min-height: 150px;
   }
 
-  .timing-summary {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .timing-summary--derived {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .playback-panel {
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
@@ -2484,12 +2442,7 @@ footer p {
   }
 
   .field-grid,
-  .playback-panel,
-  .timing-summary {
-    grid-template-columns: 1fr;
-  }
-
-  .timing-summary--derived {
+  .playback-panel {
     grid-template-columns: 1fr;
   }
 

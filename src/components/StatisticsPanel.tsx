@@ -101,13 +101,6 @@ export function StatisticsPanel({
         </div>
       )}
 
-      {timing && (
-        <div className="timing-summary timing-summary--derived" aria-label="Derived access latencies">
-          <span><strong>Hit latency</strong>{formatNumber(lru?.hitTimeNs ?? timing.cacheAccessTimeNs)} ns</span>
-          <span><strong>Miss latency</strong>{lru ? formatNumber(lru.missTimeNs) : "—"} ns</span>
-        </div>
-      )}
-
       <div className="table-wrap">
         <table>
           <thead>

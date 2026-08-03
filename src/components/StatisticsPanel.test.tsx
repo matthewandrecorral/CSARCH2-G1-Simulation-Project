@@ -40,8 +40,10 @@ describe("timing result presentation", () => {
     expect(markup).toContain("Configuration &amp; workload");
     expect(markup).toContain("4 words/block");
     expect(markup).toContain("4 cache lines");
-    expect(markup).toContain("C = 1 ns");
-    expect(markup).toContain("M = 100 ns");
+    expect(markup).toContain("Cache lookup (C): 1 ns");
+    expect(markup).toContain("Block fetch (M): 100 ns");
+    expect(markup).not.toContain("Hit latency");
+    expect(markup).not.toContain("Miss latency");
     expect(markup).toContain("Custom");
     expect(markup).toContain("0, 1, 2, 3, 0, 4");
   });

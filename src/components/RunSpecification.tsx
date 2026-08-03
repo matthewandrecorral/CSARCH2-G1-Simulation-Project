@@ -59,8 +59,9 @@ export function RunSpecification({
         <div>
           <dt>Timing</dt>
           <dd>
-            <strong>{readPolicyLabel}</strong>
-            <span>C = {timing.cacheAccessTimeNs.toLocaleString()} ns · M = {timing.mainMemoryBlockFetchTimeNs.toLocaleString()} ns</span>
+            <strong>Read policy · {readPolicyLabel}</strong>
+            <span>Cache lookup (C): {timing.cacheAccessTimeNs.toLocaleString()} ns</span>
+            <span>Block fetch (M): {timing.mainMemoryBlockFetchTimeNs.toLocaleString()} ns</span>
           </dd>
         </div>
         {sequenceSpecification.choice === "random" && (
