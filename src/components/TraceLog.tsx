@@ -1,7 +1,9 @@
 /** Synchronized, latency-aware LRU/MRU access history. */
 import type { PolicyComparisonResult, TraceEntry } from "../simulator/types";
+import type { RunSequenceSpecification } from "../application";
 import { getAccessLatencyNs, type TimingConfiguration } from "../simulator/timing";
 import { Panel } from "./Panel";
+import { RunSpecification } from "./RunSpecification";
 
 function describeDecision(entry: TraceEntry): string {
   if (entry.result === "hit") {
@@ -17,6 +19,7 @@ function describeDecision(entry: TraceEntry): string {
 
 type TraceLogProps = {
   result: PolicyComparisonResult | null;
+  sequenceSpecification: RunSequenceSpecification | null;
   timing: TimingConfiguration | null;
   visibleSteps: number;
 };
@@ -32,7 +35,12 @@ function formatLatency(entry: TraceEntry, timing: TimingConfiguration | null): s
 }
 
 /** Render policy decisions in lockstep through the current playback position. */
-export function TraceLog({ result, timing, visibleSteps }: TraceLogProps) {
+export function TraceLog({
+  result,
+  sequenceSpecification,
+  timing,
+  visibleSteps,
+}: TraceLogProps) {
   const rows = result?.inputSequence.slice(0, visibleSteps) ?? [];
 
   return (
@@ -42,6 +50,14 @@ export function TraceLog({ result, timing, visibleSteps }: TraceLogProps) {
       title="Trace log"
       aside={<span className="placeholder-label">{rows.length} visible entries</span>}
     >
+      {result && sequenceSpecification && timing && (
+        <RunSpecification
+          result={result}
+          sequenceSpecification={sequenceSpecification}
+          timing={timing}
+        />
+      )}
+
       {rows.length === 0 ? (
         <div className="empty-state" role="status">
           <strong>No visible accesses yet.</strong>

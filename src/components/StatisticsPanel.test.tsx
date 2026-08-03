@@ -17,11 +17,19 @@ const comparison = compareReplacementPolicies(
   { blockSizeWords: 4, cacheBlockCount: 4 },
   [0, 1, 2, 3, 0, 4],
 );
+const sequenceSpecification = {
+  choice: "custom",
+  randomSeed: null,
+} as const;
 
 describe("timing result presentation", () => {
   it("renders calculated policy statistics and the active inputs", () => {
     const markup = renderToStaticMarkup(
-      <StatisticsPanel result={comparison} timing={timing} />,
+      <StatisticsPanel
+        result={comparison}
+        sequenceSpecification={sequenceSpecification}
+        timing={timing}
+      />,
     );
 
     expect(markup).toContain("Calculated");
@@ -29,16 +37,33 @@ describe("timing result presentation", () => {
     expect(markup).toContain("Average access time (AMAT)");
     expect(markup).toContain("506 ns");
     expect(markup).toContain("83.3333%");
+    expect(markup).toContain("Configuration &amp; workload");
+    expect(markup).toContain("4 words/block");
+    expect(markup).toContain("4 lines");
+    expect(markup).toContain("C = 1 ns");
+    expect(markup).toContain("M = 100 ns");
+    expect(markup).toContain("Custom");
+    expect(markup).toContain("0, 1, 2, 3, 0, 4");
   });
 
   it("renders a latency for each policy in every visible trace row", () => {
     const markup = renderToStaticMarkup(
-      <TraceLog result={comparison} timing={timing} visibleSteps={5} />,
+      <TraceLog
+        result={comparison}
+        sequenceSpecification={sequenceSpecification}
+        timing={timing}
+        visibleSteps={5}
+      />,
     );
 
     expect(markup).toContain("LRU latency");
     expect(markup).toContain("MRU latency");
     expect(markup).toContain("101 ns");
     expect(markup).toContain("1 ns");
+    expect(markup).toContain("Configuration &amp; workload");
+    expect(markup).toContain("Load-through");
+    expect(markup).toContain("100 ns");
+    expect(markup).toContain("6 accesses");
+    expect(markup).toContain("0, 1, 2, 3, 0, 4");
   });
 });

@@ -10,6 +10,12 @@ import { validateMemoryBlockAddress } from "./simulator/validation";
 /** Workload sources available in the test-sequence panel. */
 export type SequenceChoice = "sequential" | "mid-repeat" | "random" | "custom";
 
+/** Workload metadata captured with a completed run for reproducible output. */
+export type RunSequenceSpecification = {
+  readonly choice: SequenceChoice;
+  readonly randomSeed: string | null;
+};
+
 /** Playback presentation: recorded steps or the completed final state. */
 export type DisplayMode = "step" | "final";
 

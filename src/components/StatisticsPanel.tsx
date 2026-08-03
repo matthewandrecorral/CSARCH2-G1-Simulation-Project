@@ -1,14 +1,17 @@
 /** Calculates and presents the seven required statistics for both policies. */
 import type { PolicyComparisonResult } from "../simulator/types";
+import type { RunSequenceSpecification } from "../application";
 import {
   calculateSimulationStatistics,
   type SimulationStatistics,
   type TimingConfiguration,
 } from "../simulator/timing";
 import { Panel } from "./Panel";
+import { RunSpecification } from "./RunSpecification";
 
 type StatisticsPanelProps = {
   result: PolicyComparisonResult | null;
+  sequenceSpecification: RunSequenceSpecification | null;
   timing: TimingConfiguration | null;
 };
 
@@ -38,16 +41,17 @@ const metricRows: readonly MetricRow[] = [
 ];
 
 /** Compare all required LRU/MRU metrics under the active timing configuration. */
-export function StatisticsPanel({ result, timing }: StatisticsPanelProps) {
+export function StatisticsPanel({
+  result,
+  sequenceSpecification,
+  timing,
+}: StatisticsPanelProps) {
   const lru = result && timing
     ? calculateSimulationStatistics(result.lru, timing)
     : null;
   const mru = result && timing
     ? calculateSimulationStatistics(result.mru, timing)
     : null;
-  const readPolicyLabel = timing?.readPolicy === "non-load-through"
-    ? "Non-load-through"
-    : "Load-through";
   const performanceLabel = lru && mru
     ? lru.averageAccessTimeNs < mru.averageAccessTimeNs
       ? "LRU leads this workload"
@@ -67,6 +71,14 @@ export function StatisticsPanel({ result, timing }: StatisticsPanelProps) {
         </span>
       )}
     >
+      {result && sequenceSpecification && timing && (
+        <RunSpecification
+          result={result}
+          sequenceSpecification={sequenceSpecification}
+          timing={timing}
+        />
+      )}
+
       {lru && mru && (
         <div className="results-overview">
           <div className="performance-callout">
@@ -90,10 +102,7 @@ export function StatisticsPanel({ result, timing }: StatisticsPanelProps) {
       )}
 
       {timing && (
-        <div className="timing-summary" aria-label="Active timing inputs">
-          <span><strong>Read policy</strong>{readPolicyLabel}</span>
-          <span><strong>Cache lookup (C)</strong>{formatNumber(timing.cacheAccessTimeNs)} ns</span>
-          <span><strong>Block fetch (M)</strong>{formatNumber(timing.mainMemoryBlockFetchTimeNs)} ns</span>
+        <div className="timing-summary timing-summary--derived" aria-label="Derived access latencies">
           <span><strong>Hit latency</strong>{formatNumber(lru?.hitTimeNs ?? timing.cacheAccessTimeNs)} ns</span>
           <span><strong>Miss latency</strong>{lru ? formatNumber(lru.missTimeNs) : "—"} ns</span>
         </div>

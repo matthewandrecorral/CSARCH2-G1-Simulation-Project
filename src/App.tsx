@@ -10,6 +10,7 @@ import {
   getTraceEntryAtStep,
   parseCustomSequence,
   type DisplayMode,
+  type RunSequenceSpecification,
   type SequenceChoice,
 } from "./application";
 import { CachePanel } from "./components/CachePanel";
@@ -88,7 +89,10 @@ export default function App() {
   const [randomSequence, setRandomSequence] = useState<readonly number[]>(() =>
     generateRandomSequence(),
   );
+  const [randomSequenceSeed, setRandomSequenceSeed] = useState<string | null>(null);
   const [comparison, setComparison] = useState<PolicyComparisonResult | null>(null);
+  const [activeSequenceSpecification, setActiveSequenceSpecification] =
+    useState<RunSequenceSpecification | null>(null);
   const [activeTiming, setActiveTiming] = useState<TimingConfiguration | null>(null);
   const [configurationErrors, setConfigurationErrors] = useState<Record<string, string>>({});
   const [displayMode, setDisplayMode] = useState<DisplayMode>("step");
@@ -111,6 +115,7 @@ export default function App() {
     // Any edited input invalidates statistics and playback, preventing a stale
     // result from being displayed beside a new configuration.
     setComparison(null);
+    setActiveSequenceSpecification(null);
     setActiveTiming(null);
     setCurrentStep(0);
     setIsPlaying(false);
@@ -151,12 +156,14 @@ export default function App() {
     setCopyStatus("");
     if (choice === "random") {
       setRandomSequence(generateRandomSequence(seed));
+      setRandomSequenceSeed(seed.trim() || null);
     }
     invalidateRun();
   }
 
   function handleRegenerate() {
     setRandomSequence(generateRandomSequence(seed));
+    setRandomSequenceSeed(seed.trim() || null);
     setCopyStatus("");
     invalidateRun();
   }
@@ -231,6 +238,10 @@ export default function App() {
     );
     setConfigurationErrors({});
     setComparison(result);
+    setActiveSequenceSpecification({
+      choice: sequenceChoice,
+      randomSeed: sequenceChoice === "random" ? randomSequenceSeed : null,
+    });
     setActiveTiming(timingValidation.value);
     setIsPlaying(false);
     setCurrentStep(displayMode === "final" ? result.inputSequence.length : 0);
@@ -429,8 +440,17 @@ export default function App() {
           </div>
         </section>
 
-        <StatisticsPanel result={comparison} timing={activeTiming} />
-        <TraceLog result={comparison} timing={activeTiming} visibleSteps={currentStep} />
+        <StatisticsPanel
+          result={comparison}
+          sequenceSpecification={activeSequenceSpecification}
+          timing={activeTiming}
+        />
+        <TraceLog
+          result={comparison}
+          sequenceSpecification={activeSequenceSpecification}
+          timing={activeTiming}
+          visibleSteps={currentStep}
+        />
       </main>
 
       <footer>
