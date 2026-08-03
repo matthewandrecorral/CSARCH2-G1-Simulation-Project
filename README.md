@@ -190,6 +190,58 @@ The mid-repeat/reverse workload deliberately changes direction and revisits olde
 
 The seeded random workload has almost no locality relative to a four-line cache. Consequently, both policies are dominated by misses: LRU has no hits and MRU has one. With load-through, every hit saves exactly `M = 100 ns` compared with a miss, which explains the differences in total time and AMAT.
 
+## Test-case screenshots
+
+The screenshots below were captured from the deployed simulator. Each result image includes the active cache geometry, timing inputs, workload source, access count, and exact sequence, so the displayed cache state and statistics can be checked against the same run. The expected arithmetic uses `C = 1 ns` and `M = 100 ns` unless stated otherwise.
+
+### Required workloads
+
+#### Sequential
+
+- [Sequential cache and final state](docs/screenshots/01-sequential-cache.png)
+- [Sequential statistics](docs/screenshots/02-sequential-statistics.png)
+
+With four cache lines, the required sequential generator produces two passes over blocks `0..7`, or 16 accesses. LRU misses on all 16 accesses because loading the second half of each pass removes the oldest blocks needed at the start of the next pass. MRU preserves enough older blocks to produce four hits. The screenshot totals are therefore correct: LRU uses `16 × 101 ns = 1,616 ns`, while MRU uses `(4 × 1 ns) + (12 × 101 ns) = 1,216 ns`. Dividing by 16 gives AMAT values of `101 ns` and `76 ns`.
+
+#### Mid-repeat and reverse
+
+- [Mid-repeat/reverse cache](docs/screenshots/03-mid-repeat-cache.png)
+- [Mid-repeat/reverse statistics](docs/screenshots/04-mid-repeat-statistics.png)
+
+For four lines, the six required ascending, repeated, and descending segments contain 40 accesses. Reversing direction revisits older blocks, which favors MRU for this particular sequence. The recorded 4 LRU hits and 17 MRU hits match the regression-tested results. Their totals also follow the load-through formula: LRU is `(4 × 1) + (36 × 101) = 3,640 ns`, and MRU is `(17 × 1) + (23 × 101) = 2,340 ns`, producing AMAT values of `91 ns` and `58.5 ns`.
+
+#### Seeded random
+
+- [Seeded random cache](docs/screenshots/05-random-cache.png)
+- [Seeded random statistics](docs/screenshots/06-random-statistics.png)
+
+The screenshot identifies seed `group-1` and shows all 64 generated addresses, making the workload reproducible. A four-line cache has very little opportunity to retain useful blocks in this sequence: LRU records no hits and MRU records one. Thus LRU takes `64 × 101 ns = 6,464 ns`; MRU takes `(1 × 1 ns) + (63 × 101 ns) = 6,364 ns`. The corresponding AMAT values, `101 ns` and `99.4375 ns`, agree with the documented automated regression.
+
+### Special and edge cases
+
+- [Policy divergence at access 9](docs/screenshots/07-step-09-policy-divergence.png) — The ninth sequential access requests block `0`. LRU has already evicted it while admitting blocks `4..7`, so LRU misses and replaces block `4`. MRU repeatedly evicted the newest resident during those admissions and preserved block `0`, so MRU hits. The shared step counter, requested block, and different cache outcomes demonstrate that both policies receive the same input but apply different victim rules.
+
+- [Synchronized trace](docs/screenshots/08-synchronized-trace.png) — The trace shows both policies filling empty slots for accesses 1–4, then selecting different victims on full-cache misses. At access 9, the LRU row reports a miss and `101 ns`, while the MRU row reports a hit and `1 ns`. This agrees with the cache-state screenshot and verifies that decisions and timing remain aligned by access number.
+
+- [Non-load-through timing](docs/screenshots/09-non-load-through-timing.png) — The custom sequence `0, 1, 2, 3, 0` produces four compulsory misses followed by one hit for both policies. Under non-load-through, a miss costs `M + 2C = 102 ns` and a hit costs `C = 1 ns`. Therefore the correct total is `(4 × 102) + 1 = 409 ns`, and `409 / 5 = 81.8 ns` AMAT, exactly as shown.
+
+- [Minimum and boundary values](docs/screenshots/10a-minimum-and-boundary-values.png)
+- [Minimum and boundary statistics](docs/screenshots/10b-minimum-and-boundary-statistics.png)
+
+  This case uses the minimum valid 2-word block size and the inclusive address boundaries `0` and `1,023` in the sequence `0, 1023, 0, 1023`. The first reference to each block misses, the repeated references hit, and no replacement is needed because only two of four lines are occupied. Both policies consequently produce two hits and two misses. The captured run uses non-load-through timing, so the total is `(2 × 102) + (2 × 1) = 206 ns`, with `51.5 ns` AMAT.
+
+- [Repeated block hits](docs/screenshots/11a-repeated-block-hits.png)
+- [Repeated block hits statistics](docs/screenshots/11b-repeated-block-hits-statistics.png)
+
+  Repeating block `7` four times must cause one initial miss followed by three hits; replacement policy cannot affect the result because the block remains in the first occupied line. Both policies correctly report a 75% hit rate. With the captured non-load-through timing, `(1 × 102) + (3 × 1) = 105 ns`, and `105 / 4 = 26.25 ns` AMAT.
+
+- [Sixteen-line cache values](docs/screenshots/12a-sixteen-line-cache-values.png)
+- [Sixteen-line cache statistics](docs/screenshots/12b-sixteen-line-cache-statistics.png)
+
+  This run uses 16-word blocks and 16 cache lines, demonstrating that the simulator accepts the assignment's larger recommended powers of two. The sequential generator expands to 64 accesses over two passes of blocks `0..31`. LRU records 64 misses, while MRU preserves 16 blocks for the second pass and records 16 hits. The displayed load-through totals, `6,464 ns` for LRU and `4,864 ns` for MRU, follow directly from those counts.
+
+- [Invalid-input validation](docs/screenshots/13-invalid-input-validation.png) — A 3-word block is rejected because it is not a power of two, and three cache lines are rejected because the minimum is four. The custom parser separately identifies `-1`, `1024`, `1.5`, and `abc` as negative, above the maximum, decimal, and malformed addresses. The preview remains invalid and no comparison result is produced, demonstrating that validation is specific and atomic rather than starting a partial simulation.
+
 ## Edge cases and automated verification
 
 The test suite covers:
