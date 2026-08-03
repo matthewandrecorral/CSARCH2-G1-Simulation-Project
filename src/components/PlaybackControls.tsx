@@ -1,4 +1,6 @@
 /** Snapshot playback controls shared by both policy views. */
+import type { CSSProperties } from "react";
+
 import type { DisplayMode } from "../application";
 
 type PlaybackControlsProps = {
@@ -34,6 +36,9 @@ export function PlaybackControls({
   onSeek,
 }: PlaybackControlsProps) {
   const stepControlsDisabled = !hasResult || mode === "final";
+  const timelineProgress = totalSteps > 0
+    ? (currentStep / totalSteps) * 100
+    : 0;
 
   return (
     <div className="playback-panel" aria-label="Simulation playback">
@@ -78,6 +83,7 @@ export function PlaybackControls({
           max={Math.max(totalSteps, 1)}
           min="0"
           onChange={(event) => onSeek(Number(event.target.value))}
+          style={{ "--timeline-progress": `${timelineProgress}%` } as CSSProperties}
           type="range"
           value={currentStep}
         />

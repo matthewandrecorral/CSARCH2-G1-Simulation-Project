@@ -700,9 +700,70 @@ p {
   font-weight: 700;
 }
 
-.timeline-control input {
+.timeline-control input[type="range"] {
   width: 100%;
-  accent-color: #245bc7;
+  height: 20px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.timeline-control input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #2864dc 0%,
+    #2864dc var(--timeline-progress),
+    #c8d4e2 var(--timeline-progress),
+    #c8d4e2 100%
+  );
+  box-shadow: inset 0 1px 2px rgb(22 36 58 / 18%);
+}
+
+.timeline-control input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  appearance: none;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #2864dc;
+  box-shadow: 0 0 0 1px #174ca8, 0 2px 5px rgb(22 36 58 / 28%);
+}
+
+.timeline-control input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: #c8d4e2;
+  box-shadow: inset 0 1px 2px rgb(22 36 58 / 18%);
+}
+
+.timeline-control input[type="range"]::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: #2864dc;
+}
+
+.timeline-control input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #2864dc;
+  box-shadow: 0 0 0 1px #174ca8, 0 2px 5px rgb(22 36 58 / 28%);
+}
+
+.timeline-control input[type="range"]:focus-visible {
+  outline: 2px solid rgb(40 100 220 / 45%);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+.timeline-control input[type="range"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .speed-control select {
@@ -1426,10 +1487,6 @@ body {
   border-color: #1e55c2;
   color: #fff;
   background: #1e55c2;
-}
-
-.timeline-control input {
-  accent-color: var(--blue);
 }
 
 .visual-legend {
