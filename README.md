@@ -6,6 +6,8 @@ A browser-based simulator that runs Least Recently Used (LRU) and Most Recently 
 
 The simulator implements the assigned Machine 6 cache-memory requirements. The cache engine is independent of React so its behavior can be tested without the interface.
 
+**Live deployment:** [Open the Fully Associative Cache Policy Lab](https://csarch2-g1-simulation-project.vercel.app)
+
 ## Features
 
 - Configurable power-of-two block size and cache-line count.
@@ -262,7 +264,7 @@ The custom sequence `0, 1, 2, 3, 0` produces four compulsory misses followed by 
 
 ![Minimum and boundary statistics](docs/screenshots/10b-minimum-and-boundary-statistics.png)
 
-This case uses the minimum valid 2-word block size and the inclusive address boundaries `0` and `1,023` in the sequence `0, 1023, 0, 1023`. The first reference to each block misses, the repeated references hit, and no replacement is needed because only two of four lines are occupied. Both policies consequently produce two hits and two misses. The captured run uses non-load-through timing, so the total is `(2 × 102) + (2 × 1) = 206 ns`, with `51.5 ns` AMAT.
+This case uses the minimum valid 2-word block size and the inclusive address boundaries `0` and `1,023` in the sequence `0, 1023, 0, 1023`. The first reference to each block misses, the repeated references hit, and no replacement is needed because only two of four lines are occupied. Both policies consequently produce two hits and two misses. The captured run uses load-through timing, so a miss costs `C + M = 101 ns`. The total is `(2 × 101) + (2 × 1) = 204 ns`, with `51 ns` AMAT.
 
 #### Repeated block hits
 
@@ -274,7 +276,7 @@ This case uses the minimum valid 2-word block size and the inclusive address bou
 
 ![Repeated block hits statistics](docs/screenshots/11b-repeated-block-hits-statistics.png)
 
-Repeating block `7` four times must cause one initial miss followed by three hits; replacement policy cannot affect the result because the block remains in the first occupied line. Both policies correctly report a 75% hit rate. With the captured non-load-through timing, `(1 × 102) + (3 × 1) = 105 ns`, and `105 / 4 = 26.25 ns` AMAT.
+With a 4-word block size and four cache lines, repeating block `7` four times must cause one initial miss followed by three hits; replacement policy cannot affect the result because the block remains in the first occupied line. Both policies correctly report a 75% hit rate. With the captured load-through timing, the total is `(1 × 101) + (3 × 1) = 104 ns`, and `104 / 4 = 26 ns` AMAT.
 
 #### Sixteen-line cache
 
