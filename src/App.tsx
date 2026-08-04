@@ -33,6 +33,11 @@ import {
   type TimingConfiguration,
 } from "./simulator/timing";
 import { validateCacheConfiguration } from "./simulator/validation";
+import {
+  clearShareQueryParam,
+  readShareSpecFromLocation,
+  type SharedRunSpec,
+} from "./share";
 
 // These are browser-rendering safeguards, not limits imposed by the simulator.
 const UI_RESOURCE_CACHE_LIMIT = 4_096;
@@ -100,6 +105,7 @@ export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speedMs, setSpeedMs] = useState(600);
   const [copyStatus, setCopyStatus] = useState("");
+  const [sharedRunNotice, setSharedRunNotice] = useState<string | null>(null);
 
   const derivedSequence = useMemo(
     () => deriveSequence(sequenceChoice, cacheBlockCount, randomSequence, customInput),
@@ -119,6 +125,71 @@ export default function App() {
     setActiveTiming(null);
     setCurrentStep(0);
     setIsPlaying(false);
+  }, []);
+
+  useEffect(() => {
+    // Runs once on mount: a shared link carries a self-contained spec
+    // (including the resolved sequence), so the exact same output can be
+    // reproduced without re-deriving or re-randomizing anything.
+    const spec: SharedRunSpec | null = readShareSpecFromLocation();
+
+    if (!spec) {
+      return;
+    }
+
+    const configurationValidation = validateCacheConfiguration({
+      blockSizeWords: spec.blockSizeWords,
+      cacheBlockCount: spec.cacheBlockCount,
+    });
+    const timingValidation = validateTimingConfiguration({
+      readPolicy: spec.readPolicy,
+      cacheAccessTimeNs: spec.cacheAccessTimeNs,
+      mainMemoryBlockFetchTimeNs: spec.mainMemoryBlockFetchTimeNs,
+    });
+
+    if (!configurationValidation.valid || !timingValidation.valid) {
+      clearShareQueryParam();
+      setSharedRunNotice("The shared link's configuration could not be loaded.");
+      return;
+    }
+
+    let result: PolicyComparisonResult;
+    try {
+      result = compareReplacementPolicies(configurationValidation.value, spec.sequence);
+    } catch {
+      clearShareQueryParam();
+      setSharedRunNotice("The shared link's sequence could not be loaded.");
+      return;
+    }
+
+    setBlockSizeWords(String(spec.blockSizeWords));
+    setCacheBlockCount(String(spec.cacheBlockCount));
+    setReadPolicy(spec.readPolicy);
+    setCacheAccessTimeNs(String(spec.cacheAccessTimeNs));
+    setMainMemoryBlockFetchTimeNs(String(spec.mainMemoryBlockFetchTimeNs));
+    setSequenceChoice(spec.sequenceChoice);
+    setRandomSequenceSeed(spec.randomSeed);
+
+    if (spec.sequenceChoice === "custom") {
+      setCustomInput(spec.sequence.join(", "));
+    } else if (spec.sequenceChoice === "random") {
+      setRandomSequence(spec.sequence);
+      setSeed(spec.randomSeed ?? "");
+    }
+
+    setConfigurationErrors({});
+    setComparison(result);
+    setActiveSequenceSpecification({
+      choice: spec.sequenceChoice,
+      randomSeed: spec.sequenceChoice === "random" ? spec.randomSeed : null,
+    });
+    setActiveTiming(timingValidation.value);
+    setDisplayMode(spec.displayMode);
+    setCurrentStep(clampPlaybackStep(spec.step, spec.sequence.length));
+    setIsPlaying(false);
+    setSharedRunNotice("Loaded a shared run. Statistics and trace log match the link exactly.");
+    clearShareQueryParam();
+    // Intentionally runs once: this reads the URL exactly at mount time.
   }, []);
 
   useEffect(() => {
@@ -255,6 +326,11 @@ export default function App() {
     }
   }
 
+  function handleSeek(step: number) {
+    setIsPlaying(false);
+    setCurrentStep(clampPlaybackStep(step, totalSteps));
+  }
+
   function handlePlayPause() {
     if (!comparison || displayMode === "final") {
       return;
@@ -313,6 +389,15 @@ export default function App() {
       </nav>
 
       <main>
+        {sharedRunNotice && (
+          <div className="shared-run-banner" role="status">
+            <span>{sharedRunNotice}</span>
+            <button className="text-button" onClick={() => setSharedRunNotice(null)} type="button">
+              Dismiss
+            </button>
+          </div>
+        )}
+
         <div className="setup-grid">
           <ConfigurationPanel
             blockSizeWords={blockSizeWords}
@@ -403,10 +488,7 @@ export default function App() {
               setIsPlaying(false);
               setCurrentStep(0);
             }}
-            onSeek={(step) => {
-              setIsPlaying(false);
-              setCurrentStep(clampPlaybackStep(step, totalSteps));
-            }}
+            onSeek={handleSeek}
             onSpeedChange={setSpeedMs}
             speedMs={speedMs}
             totalSteps={totalSteps}
@@ -441,14 +523,18 @@ export default function App() {
         </section>
 
         <StatisticsPanel
+          currentStep={currentStep}
+          displayMode={displayMode}
           result={comparison}
           sequenceSpecification={activeSequenceSpecification}
           timing={activeTiming}
         />
         <TraceLog
+          onSeek={handleSeek}
           result={comparison}
           sequenceSpecification={activeSequenceSpecification}
           timing={activeTiming}
+          totalSteps={totalSteps}
           visibleSteps={currentStep}
         />
       </main>

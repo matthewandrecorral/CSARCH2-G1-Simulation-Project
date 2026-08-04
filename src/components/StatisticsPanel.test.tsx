@@ -26,6 +26,8 @@ describe("timing result presentation", () => {
   it("renders calculated policy statistics and the active inputs", () => {
     const markup = renderToStaticMarkup(
       <StatisticsPanel
+        currentStep={6}
+        displayMode="final"
         result={comparison}
         sequenceSpecification={sequenceSpecification}
         timing={timing}
@@ -46,14 +48,23 @@ describe("timing result presentation", () => {
     expect(markup).not.toContain("Miss latency");
     expect(markup).toContain("Custom");
     expect(markup).toContain("0, 1, 2, 3, 0, 4");
+    expect(markup).toContain("Evictions");
+    expect(markup).toContain("Empty-slot loads");
+    expect(markup).toContain("Longest hit streak");
+    expect(markup).toContain("Unique blocks touched");
+    expect(markup).toContain("Share this result");
+    expect(markup).toContain("Download CSV");
+    expect(markup).toContain("Download JSON");
   });
 
   it("renders a latency for each policy in every visible trace row", () => {
     const markup = renderToStaticMarkup(
       <TraceLog
+        onSeek={() => {}}
         result={comparison}
         sequenceSpecification={sequenceSpecification}
         timing={timing}
+        totalSteps={6}
         visibleSteps={5}
       />,
     );
@@ -67,5 +78,8 @@ describe("timing result presentation", () => {
     expect(markup).toContain("100 ns");
     expect(markup).toContain("6 accesses");
     expect(markup).toContain("0, 1, 2, 3, 0, 4");
+    expect(markup).toContain("Filter");
+    expect(markup).toContain("Find block address");
+    expect(markup).toContain("Next divergence");
   });
 });

@@ -2514,3 +2514,105 @@ footer p {
     transition-duration: 0.01ms !important;
   }
 }
+/* Extended statistics, trace tooling, and share-link additions. */
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.panel-actions .secondary-button {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+}
+
+.metric-cell--winner {
+  position: relative;
+  font-weight: 700;
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.metric-table-caption {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+
+.export-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--ink-200);
+}
+
+.export-controls > span {
+  font-size: 0.82rem;
+  color: var(--ink-500);
+}
+
+.export-controls small {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.shared-run-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 18px;
+  border: 1px solid #78a2ed;
+  border-radius: 12px;
+  color: #164eaf;
+  background: var(--blue-soft);
+  font-size: 0.9rem;
+}
+
+.trace-toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--ink-200);
+}
+
+.trace-toolbar__filter,
+.trace-toolbar__search {
+  min-width: 180px;
+}
+
+.trace-toolbar__filter select,
+.trace-toolbar__search input {
+  min-width: 0;
+}
+
+.trace-toolbar__divergence {
+  display: flex;
+  gap: 8px;
+}
+
+.divergence-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #8b4b1d;
+  background: #fff1e5;
+}
