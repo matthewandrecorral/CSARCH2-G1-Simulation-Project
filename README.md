@@ -8,6 +8,10 @@ The simulator implements the assigned Machine 6 cache-memory requirements. The c
 
 **Live deployment:** [Open the Fully Associative Cache Policy Lab](https://csarch2-g1-simulation-project.vercel.app)
 
+**Video demo walkthrough:** [Watch on YouTube](https://youtu.be/a_lCjGodQG4)
+
+**Recorded-demo guide:** [Follow the 7½-minute recording plan and script](docs/video-demo-script.md)
+
 ## Features
 
 - Configurable power-of-two block size and cache-line count.
