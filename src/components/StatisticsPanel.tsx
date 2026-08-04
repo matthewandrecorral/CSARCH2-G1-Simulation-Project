@@ -325,25 +325,6 @@ export function StatisticsPanel({
                 </tr>
               );
             })}
-          </tbody>
-        </table>
-      </div>
-      <p className="scope-note formula-note">
-        Hit = C. Load-through miss = C + M. Non-load-through miss = M + 2C.
-        Total = hits × hit latency + misses × miss latency; AMAT = total ÷ accesses.
-      </p>
-
-      <div className="table-wrap">
-        <table>
-          <caption className="metric-table-caption">Additional analytics</caption>
-          <thead>
-            <tr>
-              <th scope="col">Metric</th>
-              <th scope="col">LRU</th>
-              <th scope="col">MRU</th>
-            </tr>
-          </thead>
-          <tbody>
             {extendedRows.map((row) => {
               const winners = lru && mru ? winnerClass(row, lru, mru) : { lru: "", mru: "" };
               return (
@@ -357,6 +338,11 @@ export function StatisticsPanel({
           </tbody>
         </table>
       </div>
+      <p className="scope-note formula-note">
+        Hit = C. Load-through miss = C + M. Non-load-through miss = M + 2C.
+        Total = hits × hit latency + misses × miss latency; AMAT = total ÷ accesses.
+      </p>
+
 
       <div className="export-controls">
         <span>Export this run</span>
