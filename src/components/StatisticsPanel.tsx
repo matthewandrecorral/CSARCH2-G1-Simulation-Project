@@ -357,11 +357,6 @@ export function StatisticsPanel({
           </tbody>
         </table>
       </div>
-      <p className="scope-note">
-        Highlighted cells mark the better-performing policy for each metric; a
-        tie leaves both cells unhighlighted. Evictions and empty-slot loads
-        always sum to the miss count above.
-      </p>
 
       <div className="export-controls">
         <span>Export this run</span>
