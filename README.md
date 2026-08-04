@@ -10,8 +10,6 @@ The simulator implements the assigned Machine 6 cache-memory requirements. The c
 
 **Video demo walkthrough:** [Watch on YouTube](https://youtu.be/a_lCjGodQG4)
 
-**Recorded-demo guide:** [Follow the 7½-minute recording plan and script](docs/video-demo-script.md)
-
 ## Features
 
 - Configurable power-of-two block size and cache-line count.
@@ -198,7 +196,7 @@ The seeded random workload has almost no locality relative to a four-line cache.
 
 ## Test-case screenshots
 
-The screenshots below were captured from the deployed simulator. Each result image includes the active cache geometry, timing inputs, workload source, access count, and exact sequence, so the displayed cache state and statistics can be checked against the same run. The expected arithmetic uses `C = 1 ns` and `M = 100 ns` unless stated otherwise.
+The screenshots below were captured from the deployed simulator. Together, each documented test case shows the active cache geometry, timing inputs, workload source, access count, exact sequence, cache state, or statistics needed to verify the run. The expected arithmetic uses `C = 1 ns` and `M = 100 ns` unless stated otherwise.
 
 ### Required workloads
 
