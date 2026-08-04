@@ -335,7 +335,7 @@ export function StatisticsPanel({
 
       <div className="table-wrap">
         <table>
-          <caption className="metric-table-caption">Extended analytics</caption>
+          <caption className="metric-table-caption">Additional analytics</caption>
           <thead>
             <tr>
               <th scope="col">Metric</th>
