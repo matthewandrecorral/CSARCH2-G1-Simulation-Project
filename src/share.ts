@@ -1,10 +1,4 @@
-/**
- * Encode a completed run into a URL so a fellow student can load the exact
- * same configuration, workload, and playback position with one link. The
- * resolved access sequence travels inside the link itself, so the output is
- * reproduced exactly even for an unseeded random run or an edited custom
- * sequence — nothing is re-derived or re-randomized on the receiving end.
- */
+
 import type { DisplayMode, RunSequenceSpecification, SequenceChoice } from "./application";
 import type { ReadPolicy, TimingConfiguration } from "./simulator/timing";
 import type { CacheConfiguration } from "./simulator/types";
@@ -12,7 +6,7 @@ import type { CacheConfiguration } from "./simulator/types";
 export const SHARE_QUERY_PARAM = "share";
 const SHARE_SPEC_VERSION = 1;
 
-/** Everything needed to reproduce one completed comparison, self-contained. */
+
 export type SharedRunSpec = {
   readonly v: typeof SHARE_SPEC_VERSION;
   readonly blockSizeWords: number;
@@ -36,7 +30,7 @@ export type BuildShareSpecInput = {
   readonly step: number;
 };
 
-/** Capture the exact inputs and playback position behind a completed run. */
+
 export function buildShareSpec(input: BuildShareSpecInput): SharedRunSpec {
   return {
     v: SHARE_SPEC_VERSION,
